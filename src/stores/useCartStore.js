@@ -1,11 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-// const backend = "http://13.125.229.218:8080";
-// const backend = "http://192.168.0.115:8080"; 
-// const backend = "http://52.78.9.103:9999/api"; 
 const backend = "http://www.campingontop.kro.kr/api"; 
-// const backend = "http://"+process.env.VUE_APP_BACKEND_URL;
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
