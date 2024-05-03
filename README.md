@@ -12,7 +12,7 @@
 
 |                    **임태우**                    |                 **길민석**                 |                **한경훈**                |
 | :----------------------------------------------: | :----------------------------------------: | :--------------------------------------: | 
-| [@Tesssssssssy](https://github.com/Tesssssssssy) | [@gilms0730](https://github.com/gilms0730) | [@Kyungqq](https://github.com/heejiyang) |
+| [@Tesssssssssy](https://github.com/Tesssssssssy) | [@gilms0730](https://github.com/gilms0730) | [@Kyungqq]() |
 
 </div>
 
