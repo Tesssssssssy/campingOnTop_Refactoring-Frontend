@@ -2,9 +2,6 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import VueJwtDecode from "vue-jwt-decode";
 
-// const backend = "http://13.125.229.218:8080";
-// const backend = "http://192.168.0.115:8080";
-// const backend = "http://52.78.9.103:9999/api";
 const backend = "http://www.campingontop.kro.kr/api"; 
 
 export const useMemberStore = defineStore("member", {
