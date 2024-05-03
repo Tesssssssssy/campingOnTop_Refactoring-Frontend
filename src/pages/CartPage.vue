@@ -168,7 +168,6 @@ a {
   margin: auto;
   padding: 5px;
 }
-
 .cart ul {
   background-color: whitesmoke;
   padding: 30px;
@@ -189,7 +188,6 @@ table {
   width: 100%;
   font-size: 14px;
 }
-
 thead {
   text-align: center;
   font-weight: bold;
@@ -216,22 +214,18 @@ td {
   margin-top: 6px;
   font-weight: bold;
 }
-
 .cart__list__smartstore {
   font-size: 12px;
   color: gray;
 }
-
 .cart__list__option {
   vertical-align: top;
   padding: 20px;
 }
-
 .cart__list__option p {
   margin-bottom: 25px;
   position: relative;
 }
-
 .cart__list__option p::after {
   content: "";
   width: 90%;
@@ -273,12 +267,10 @@ td {
 .cart__list__detail :nth-child(6) {
   border-left: 2px solid whitesmoke;
 }
-
 .cart__list__detail :nth-child(5),
 .cart__list__detail :nth-child(6) {
   text-align: center;
 }
-
 .cart__list__detail :nth-child(5) button {
   background-color: limegreen;
   color: white;
@@ -288,7 +280,6 @@ td {
   font-size: 12px;
   margin-top: 5px;
 }
-
 .cart__list th,
 .cart__list td {
   text-align: center;
@@ -303,13 +294,11 @@ td {
 .cart__list td:nth-child(6) {
   width: 120px;
 }
-
 .cart__list img {
   max-width: 100px;
   height: auto;
   margin: 0 auto;
 }
-
 .cart__list__optionbtn {
   display: block;
   text-align: left;
@@ -327,7 +316,6 @@ td {
   display: block;
   margin: auto;
 }
-
 .cart__bigorderbtn {
   width: 200px;
   height: 50px;
@@ -336,7 +324,6 @@ td {
   border-radius: 5px;
   display: block;
 }
-
 .cart__bigorderbtn.left {
   background-color: white;
   border: 1px lightgray solid;
@@ -357,18 +344,15 @@ td {
   max-width: 1180px;
   padding: 0 20px;
 }
-
 section#category {
   text-align: center;
   width: auto;
   overflow: hidden;
 }
-
 section#category div.category_slide {
   height: 50px;
   margin-bottom: 100px;
 }
-
 section#category ul {
   list-style: none;
   padding: 0;
@@ -376,7 +360,6 @@ section#category ul {
   width: auto;
   display: inline-flex;
 }
-
 section#category ul li {
   display: inline-block;
   padding: 16px 10px;
@@ -422,7 +405,6 @@ section#main_lists div.card div.ribbon {
   left: 0;
   z-index: 100;
 }
-
 section#main_lists div.card div.p_images {
   aspect-ratio: 14/9;
   border-radius: 10px;
@@ -436,12 +418,10 @@ section#main_lists div.card div.card-body h5.card-title a {
   font-size: 15px;
   color: #1c1c1c;
 }
-
 section#main_lists div.card div.card-body h6.card-subtitle {
   margin: 0 0 5px 0;
   color: #777;
 }
-
 section#main_lists div.card div.p_images span.btn_fav {
   color: #fff;
   padding: 10px;
@@ -461,7 +441,6 @@ section#main_lists div.card div.card-body div.p_price span.price {
   color: #1c1c1c;
   font-weight: bold;
 }
-
 section#main_lists div.card div.card-body div.p_price span.night {
   font-size: 13px;
   color: #777;
@@ -489,7 +468,6 @@ main {
   width: 100%;
   height: 100%;
 }
-
 .p_images .swiper-slide img {
   display: block;
   width: 100%;
@@ -514,7 +492,6 @@ main {
   cursor: pointer;
   opacity: 0.7;
 }
-
 .swiper-button-prev2:hover,
 .swiper-button-next2:hover {
   opacity: 1;
@@ -532,7 +509,6 @@ main {
 .swiper-button-next2 img {
   width: 20px;
 }
-
 .swiper-lazy-preloader {
   border-color: var(--wehome-color);
   border-top-color: transparent;
@@ -565,55 +541,46 @@ nav {
   z-index: 100;
   padding-bottom: calc(66px + env(safe-area-inset-bottom));
 }
-
 nav div.button_wrap {
   position: relative;
   width: 25px;
   height: 25px;
   margin: 13px auto 4px auto;
 }
-
 nav div.row a {
   text-decoration: none;
   color: #666;
   text-align: center;
   padding: 0;
 }
-
 nav div.row a:hover h2,
 nav div.row a.on h2 {
   color: var(--wehome-color);
   font-weight: bold;
 }
-
 nav div.row a img {
   position: absolute;
   top: 0;
   left: 0;
 }
-
 nav div.row a img.over {
   opacity: 0;
   transition: 0.3s ease;
 }
-
 nav div.row a:hover img.over,
 nav div.row a.on img.over {
   opacity: 1;
 }
-
 nav div.row h2 {
   font-size: 0.8em;
   font-weight: normal;
 }
-
 /*  Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
   nav {
     display: none !important;
   }
 }
-
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
   main {
@@ -621,7 +588,6 @@ nav div.row h2 {
     margin: 0 auto;
   }
 }
-
 /* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
   section#search {
