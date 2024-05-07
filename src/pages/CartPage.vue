@@ -18,12 +18,14 @@
         <table class="cart__list">
           <thead>
             <tr>
-              <!--
               <td>
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  v-model="allSelected"
+                  @change="toggleAll"
+                />
                 전체 선택
               </td>
-              -->
               <td colspan="2">숙소 이미지</td>
               <td>숙소 이름</td>
               <td>숙소 주소</td>
@@ -32,10 +34,11 @@
               <td>예상 결제 비용</td>
             </tr>
           </thead>
-
           <tbody v-if="cartStore.cartList && cartStore.cartList.length">
             <tr v-for="cartItem in cartStore.cartList" :key="cartItem.id">
-              <!--<td><input type="checkbox" /></td>-->
+              <td>
+                <input type="checkbox" v-model="cartItem.selected" />
+              </td>
               <td colspan="2">
                 <img
                   v-if="
@@ -48,7 +51,6 @@
                 />
               </td>
               <td>
-                <!-- Use router-link to create a link to /details/숙소id -->
                 <router-link
                   :to="'/details/' + cartItem.getFindHouseDtoResList[0].id"
                 >
@@ -105,8 +107,23 @@ import VueJwtDecode from "vue-jwt-decode";
 export default {
   computed: {
     ...mapStores(useMemberStore, useCartStore),
+    allSelected: {
+      get() {
+        return this.cartStore.cartList.length > 0 && this.cartStore.cartList.every(item => item.selected);
+      },
+      set(value) {
+        this.cartStore.cartList.forEach(item => {
+          item.selected = value;
+        });
+      }
+    },
   },
-  components: {},
+  methods: {
+    toggleAll() {
+      // 이 메소드에서는 별도의 상태 변경 없이, allSelected 세터가 호출되도록 합니다.
+      // allSelected의 세터가 각 항목의 selected 값을 조절합니다.
+    }
+  },
   async mounted() {
     const token = window.localStorage.getItem("token");
     if (token) {
