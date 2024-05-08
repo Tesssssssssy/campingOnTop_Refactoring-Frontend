@@ -253,10 +253,8 @@ export default {
           phoneNum: this.phoneNum,
         };
         const response = await axios.post(
-          //"http://13.125.229.218:8080/user/signUp",
-          //"http://192.168.0.115:8080/user/signUp",
-          //"http://52.78.9.103:9999/api/user/signUp",
-          "http://www.campingontop.kro.kr/api/user/signUp",
+          // "http://www.campingontop.kro.kr/api/user/signUp",
+          "http://localhost:8080/user/signUp",
           data
         );
         if (response.status === 200 && response.data) {

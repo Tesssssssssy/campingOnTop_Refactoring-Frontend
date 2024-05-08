@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-const backend = "http://www.campingontop.kro.kr/api"; 
+// const backend = "http://www.campingontop.kro.kr/api"; 
+const backend = "http://localhost:8080"; 
 
 export const useHouseStore = defineStore("house", {
   state: () => ({
