@@ -253,7 +253,8 @@ export default {
           phoneNum: this.phoneNum,
         };
         const response = await axios.post(
-           "http://www.campingontop.kro.kr/api/user/sellerSignUp",
+          //  "http://www.campingontop.kro.kr/api/user/sellerSignUp",
+          "http://localhost:8080/user/sellerSignUp",
           data
         );
         if (response.status === 200 && response.data) {

@@ -65,6 +65,9 @@
             <tr>
               <td colspan="7">장바구니 목록에 숙소가 없습니다.</td>
             </tr>
+            <tr>
+              <td colspan="7"><a href="/">숙소 찾아보기</a></td>
+            </tr>
           </tbody>
 
           <!-- 테이블 푸터 -->
