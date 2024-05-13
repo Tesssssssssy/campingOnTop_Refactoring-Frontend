@@ -4,13 +4,13 @@
       <section class="cart__list">
         <div class="cart__information">
           <h1 style="font-weight: bold;">좋아요</h1>
-          <h6>
-            😅 좋아요 목록 수정, 삭제 기능은 추후 구현 예정입니다. (추가만 가능)
-          </h6>
         </div>
         <table class="cart__list">
           <thead>
             <tr>
+              <td>
+                <input type="checkbox" v-model="selectAll" /> 전체 선택
+              </td>
               <td colspan="2">숙소 이미지</td>
               <td>숙소 이름</td>
               <td>숙소 주소</td>
@@ -18,41 +18,26 @@
             </tr>
           </thead>
           <tbody v-if="likesStore.likesList && likesStore.likesList.length > 0">
-            <template
-              v-for="(likesItem, index) in likesStore.likesList"
-              :key="index"
-            >
-              <tr :class="{ 'selected-row': likesItem.isSelected }">
-                <td colspan="2">
-                  <img
-                    v-if="likesItem.filenames && likesItem.filenames.length > 0"
-                    :src="likesItem.filenames[0]"
-                    alt="Likes Image"
-                    style="width: 100px"
-                  />
-                </td>
-                <td>
-                  <router-link :to="'/details/' + likesItem.id">
-                    {{ likesItem.name }}
-                  </router-link>
-                </td>
-                <td>{{ likesItem.address }}</td>
-                <td>{{ likesItem.price.toLocaleString() }}원</td>
-              </tr>
-            </template>
+            <tr v-for="(likesItem, index) in likesStore.likesList" :key="index" :class="{ 'selected-row': likesItem.isSelected }">
+              <td>
+                <input type="checkbox" v-model="likesItem.isSelected" />
+              </td>
+              <td colspan="2">
+                <img v-if="likesItem.filenames && likesItem.filenames.length > 0" :src="likesItem.filenames[0]" alt="Likes Image" style="width: 100px"/>
+              </td>
+              <td>
+                <router-link :to="'/details/' + likesItem.id">{{ likesItem.name }}</router-link>
+              </td>
+              <td>{{ likesItem.address }}</td>
+              <td>{{ likesItem.price.toLocaleString() }}원</td>
+            </tr>
           </tbody>
           <tbody v-else>
             <tr>
-              <td colspan="5">
-                {{
-                  likesStore.likesList
-                    ? "좋아요 목록에 숙소가 없습니다."
-                    : "Loading..."
-                }}
-              </td>
+              <td colspan="6">좋아요 목록에 숙소가 없습니다.</td>
             </tr>
             <tr>
-              <td colspan="5"><a href="/">숙소 찾아보기</a></td>
+              <td colspan="6"><a href="/">숙소 찾아보기</a></td>
             </tr>
           </tbody>
         </table>
@@ -74,13 +59,13 @@ export default {
         return (
           Array.isArray(this.likesStore.likesList) &&
           this.likesStore.likesList.length > 0 &&
-          this.likesStore.likesList.every((item) => !!item.isSelected)
+          this.likesStore.likesList.every((item) => item.isSelected)
         );
       },
       set(value) {
         if (Array.isArray(this.likesStore.likesList)) {
           this.likesStore.likesList.forEach((item) => {
-            this.$set(item, "isSelected", !!value);
+            item.isSelected = value; // Use Vue's reactivity system correctly
           });
         }
       },
