@@ -37,5 +37,17 @@ export const useCartStore = defineStore("cart", {
         throw error;
       }
     },
+    async deleteSelectedItems() {
+      try {
+        const selectedItems = this.cartList.filter(item => item.selected);
+        for (let item of selectedItems) {
+          await axios.patch(backend + `/cart/delete/${item.id}`);
+          this.cartList = this.cartList.filter(cartItem => cartItem.id !== item.id);
+        }
+      } catch (error) {
+        console.error('삭제 중 오류 발생:', error);
+        alert('삭제 처리 중 문제가 발생했습니다.');
+      }
+    }    
   },
 });
