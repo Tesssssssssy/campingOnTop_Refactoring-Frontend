@@ -5,7 +5,10 @@ import axios from "axios";
 const backend = "http://localhost:8080"; 
 
 export const useLikesStore = defineStore("likes", {
-  state: () => ({ likesList: [] }),
+  state: () => ({ 
+    likesList: [],
+    isSelectedAll: false, 
+  }),
   actions: {
     async getLikesList(userId) {
       try {
@@ -35,15 +38,16 @@ export const useLikesStore = defineStore("likes", {
         throw error;
       }
     },
-    async deleteLikes(likeIds) {
+    async deleteSelectedItems() {
       try {
-        for (const likeId of likeIds) {
-          await axios.patch(backend + "/likes/delete/" + likeId);
+        const selectedItems = this.likesList.filter(item => item.isSelected);
+        for (let item of selectedItems) {
+          await axios.patch(backend + `/likes/delete/${item.id}`);
+          this.likesList = this.likesList.filter(likeItem => likeItem.id !== item.id);
         }
-        alert("선택한 숙소가 좋아요 목록에서 삭제되었습니다.");
       } catch (error) {
-        console.error("Error deleting likes:", error);
-        throw error;
+        console.error('삭제 중 오류 발생:', error);
+        alert('삭제 처리 중 문제가 발생했습니다.');
       }
     },
   },
