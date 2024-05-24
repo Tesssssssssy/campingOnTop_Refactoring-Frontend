@@ -74,7 +74,7 @@
         </table>
         
         <div class="cart__mainbtns">
-          <button class="cart__bigorderbtn right">결제하기</button>
+          <button class="cart__bigorderbtn right" @click="cartStore.processPayment">결제하기</button>
         </div>
        
       </section>
