@@ -62,7 +62,7 @@
           <tfoot>
             <tr>
               <td colspan="3">
-                  <button class="cart__bigorderbtn right">선택 내역 삭제</button>
+                <button @click="cartStore.deleteSelectedItems" class="cart__bigorderbtn right">선택 항목 삭제</button>
               </td>
               <td>
                 <h2 id="tfoot_message"></h2>
@@ -74,7 +74,7 @@
         </table>
         
         <div class="cart__mainbtns">
-          <button class="cart__bigorderbtn right">결제하기</button>
+          <button class="cart__bigorderbtn right" @click="cartStore.processPayment">결제하기</button>
         </div>
        
       </section>
@@ -125,7 +125,7 @@ export default {
       if (this.allSelected !== allChecked) {
         this.allSelected = allChecked;
       }
-    }
+    },
   },
   components: {},
   async mounted() {

@@ -84,6 +84,13 @@
                   width="21"
                 />장바구니</a
               >
+              <a href="/orders/complete" class="btn"
+                ><img
+                  src="@/assets/images/header/bell-solid.svg"
+                  alt="사용자"
+                  width="21"
+                />결제내역</a
+              >
               <a href="/login" @click.prevent="logout" class="btn"
                 ><img
                   src="@/assets/images/header/user-solid.svg"
