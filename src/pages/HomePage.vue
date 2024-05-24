@@ -57,158 +57,12 @@
           </div>
         </div>
       </form>
-      <!--
-      <div id="wh_fav_area" class="wh_shadow">
-        <h6>서울 인기지역</h6>
-        <div class="row no-gutters">
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              홍대
-            </a>
-          </div>
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              이태원
-            </a>
-          </div>
-        </div>
-
-        <div class="row no-gutters">
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              명동
-            </a>
-          </div>
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              을지로
-            </a>
-          </div>
-        </div>
-
-        <div class="row no-gutters">
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              강남
-            </a>
-          </div>
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              잠실
-            </a>
-          </div>
-        </div>
-        <br />
-        <h6>부산 인기지역</h6>
-        <div class="row no-gutters">
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              해운대
-            </a>
-          </div>
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              광안리
-            </a>
-          </div>
-        </div>
-
-        <div class="row no-gutters">
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              서면
-            </a>
-          </div>
-          <div class="area col-6">
-            <a href="#">
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                alt=""
-                width="12"
-              />
-              영도구
-            </a>
-          </div>
-        </div>
-      </div>
-      -->
     </section>
 
     <main class="mainClass">
       <section id="category">
         <div class="swiper-container category_slide">
           <ul class="swiper-wrapper">
-            <!--
-            <li
-              class="swiper-slide"
-              data-type="subway"
-              onclick="window.dataLayer.push({event: 'click_home',click_target: 'subway'});"
-            >
-              <img
-                src="@/assets/images/home/train-subway-solid.svg"
-                width="25"
-              />
-              <h6>역세권</h6>
-            </li>
-            -->
-            <!--
-            <li
-              class="swiper-slide"
-              data-type="subway"
-              onclick="window.dataLayer.push({event: 'click_home',click_target: 'subway'});"
-            >
-              <img
-                src="@/assets/images/header/location-dot-solid.svg"
-                width="21"
-              />
-              <h6>내 주변</h6>
-            </li>
-            -->
             <li
               class="swiper-slide"
               data-type="budget"
@@ -242,16 +96,6 @@
               />
               <h6>인기 많은 순</h6>
             </li>
-            <!--
-            <li
-              class="swiper-slide"
-              data-type="bbq"
-              onclick="window.dataLayer.push({event: 'click_home',click_target: 'bbq'});"
-            >
-              <img src="@/assets/images/home/fire-solid.svg" width="24" />
-              <h6>바베큐</h6>
-            </li>
-            -->
           </ul>
         </div>
       </section>
@@ -472,7 +316,6 @@ export default {
 
 [class^="icon-"],
 [class*=" icon-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
   font-family: "yg-jalnan" !important;
   font-style: normal;
   font-weight: normal;
@@ -480,43 +323,52 @@ export default {
   text-transform: none;
   line-height: 1;
 
-  /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #fff;  /* 배경 색상을 흰색으로 설정 */
+  font-family: "yg-jalnan" !important;
+  padding-top: 172px;
+  margin: 0;
+  padding: 0;
+}
+
+.page-content {
+  width: 100%;
+  background-color: #fff;  /* 배경 색상을 흰색으로 설정 */
 }
 
 #scrollTopPc {
   display: none;
   position: fixed;
-  bottom: 64px; /* 브라우저 아래쪽 끝에서부터의 거리 */
-  right: 15px; /* 브라우저 오른쪽 끝에서부터의 거리 */
+  bottom: 64px;
+  right: 15px;
   cursor: pointer;
   z-index: 99;
 }
 
-/* 모바일 TOP 버튼 */
 #scrollTopMob {
   display: none;
   position: fixed;
-  bottom: 64px; /* 브라우저 아래쪽 끝에서부터의 거리 */
-  right: 15px; /* 브라우저 오른쪽 끝에서부터의 거리 */
+  bottom: 64px;
+  right: 15px;
   z-index: 99;
 }
 
-/* PC DOWN 버튼 */
 #scrollDownPc {
   position: fixed;
-  bottom: 20px; /* 브라우저 아래쪽 끝에서부터의 거리 */
-  right: 15px; /* 브라우저 오른쪽 끝에서부터의 거리 */
+  bottom: 20px;
+  right: 15px;
   cursor: pointer;
   z-index: 99;
 }
 
-/* 모바일 DOWN 버튼 */
 #scrollDownMob {
   position: fixed;
-  bottom: 20px; /* 브라우저 아래쪽 끝에서부터의 거리 */
-  right: 15px; /* 브라우저 오른쪽 끝에서부터의 거리 */
+  bottom: 20px;
+  right: 15px;
   z-index: 99;
 }
 
@@ -569,7 +421,6 @@ element.style {
   content: "\e911";
 }
 
-/* mobile first */
 :root {
   --wehome-color: #6800cd;
 }
@@ -578,14 +429,6 @@ element.style {
 }
 .wehome_bg_color {
   background-color: #6800cd;
-}
-
-html {
-  font-size: 13px;
-}
-body {
-  font-family: "yg-jalnan" !important;
-  padding-top: 172px;
 }
 
 .noshow {
@@ -681,7 +524,6 @@ body {
   overflow: hidden;
 }
 
-/* Calendar */
 .ui-widget {
   font-family: "yg-jalnan";
 }
@@ -736,11 +578,9 @@ table.ui-datepicker-calendar thead th {
 }
 .ui-datepicker a.ui-datepicker-prev {
   left: -22px;
-  /* background: url(@/image/cmn/cal_arrow_left.gif) no-repeat center; */
 }
 .ui-datepicker a.ui-datepicker-next {
   right: -22px;
-  /* background: url(@/image/cmn/cal_arrow_right.gif) no-repeat center; */
 }
 .ui-datepicker a.ui-state-active {
   font-weight: bold;
@@ -1150,12 +990,10 @@ footer .app_link img {
   margin-bottom: 5px;
 }
 
-/* google map */
 .pac-container {
   z-index: 1050;
 }
 
-/* mobile */
 .navbar_menu {
   z-index: 1100;
   position: fixed;
@@ -1208,14 +1046,12 @@ footer .app_link img {
   }
 }
 
-/* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
   div#wh_fav_area {
     width: 380px;
   }
 }
 
-/*  Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
   footer {
     font-size: 1rem;
@@ -1259,7 +1095,6 @@ footer .app_link img {
   }
 }
 
-/* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
   header {
     max-width: 1180px;
@@ -1272,7 +1107,6 @@ footer .app_link img {
   }
 }
 
-/* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
   section#search {
     margin: 0 auto;
