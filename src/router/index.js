@@ -8,6 +8,7 @@ import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import SellerSignupPage from "../pages/SellerSignupPage";
 import HouseRegisterPage from "../pages/HouseRegisterPage";
+import OrderCompletePage from "../pages/OrderCompletePage";
 
 const requireAuth = () => (from, to, next) => {
   const token = localStorage.getItem("token");
@@ -26,6 +27,7 @@ const routes = [
   { path: "/signup", component: SignupPage },
   { path: "/sellerSignup", component: SellerSignupPage },
   { path: "/houseRegister", component: HouseRegisterPage, beforeEnter: requireAuth() },
+  { path: "/orders/complete", component: OrderCompletePage, beforeEnter: requireAuth() },
 ];
 
 const router = createRouter({
