@@ -22,7 +22,7 @@ export const useMemberStore = defineStore("member", {
           let userClaims = VueJwtDecode.decode(token);
 
           window.localStorage.setItem("token", token);
-          this.setDecodedToken(userClaims); // Call setDecodedToken to update the store
+          this.setDecodedToken(userClaims); 
 
           this.isAuthenticated = true;
         } else {
@@ -41,6 +41,19 @@ export const useMemberStore = defineStore("member", {
       window.localStorage.removeItem("token");
       this.isAuthenticated = false;
       this.decodedToken = null;
+    },
+
+    checkTokenExpiration() {
+      const token = window.localStorage.getItem("token");
+      if (token) {
+        const decoded = VueJwtDecode.decode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp < currentTime) {
+          this.logout();
+          alert("로그인 만료시간이 되어 로그아웃되었습니다.");
+          window.location.href = "/login";
+        }
+      }
     },
   },
 });
