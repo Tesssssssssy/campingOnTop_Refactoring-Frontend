@@ -179,6 +179,11 @@ export default {
       const store = useMemberStore();
       store.setDecodedToken(decoded);
       store.isAuthenticated = true;
+      store.checkTokenExpiration(); 
+
+      setInterval(() => {
+        store.checkTokenExpiration(); // 주기적으로 토큰 만료 확인
+      }, 30000); // 30초마다 토큰 만료 확인
     }
   },
 };
