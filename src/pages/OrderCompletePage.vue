@@ -1,12 +1,6 @@
 <template>
   <div class="order-container">
     <div class="content-container">
-      <div class="text-with-image">
-        <a href="/">
-          <img src="@/assets/images/home/logo.png" alt="campingontop Logo" sizes="100px">
-        </a>
-        <h4>&nbsp; &nbsp; 주문 완료!</h4>
-      </div>
       <div>
         <h2>누적 결제 내역</h2>
       </div>
