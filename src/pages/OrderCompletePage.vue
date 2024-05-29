@@ -25,7 +25,8 @@
 
 <script>
 import axios from "axios";
-const backend = "http://localhost:8080";
+// const backend = "http://www.campingontop.kro.kr/api"; 
+const backend = "http://localhost:8080"; 
 
 export default {
   name: "OrderCompletePage",
