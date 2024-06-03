@@ -9,6 +9,8 @@ import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import SellerSignupPage from "../pages/SellerSignupPage";
 import HouseRegisterPage from "../pages/HouseRegisterPage";
+import CouponPage from '../pages/CouponPage';
+import MyCouponPage from '../pages/MyCouponPage';
 import OrderCompletePage from "../pages/OrderCompletePage";
 
 const requireAuth = () => (from, to, next) => {
@@ -18,7 +20,7 @@ const requireAuth = () => (from, to, next) => {
   } else {
     const decoded = VueJwtDecode.decode(token);
     const currentTime = Math.floor(Date.now() / 1000);
-    
+
     if (decoded.exp < currentTime) {
       window.localStorage.removeItem("token"); // 토큰 제거
       alert("로그인 시간이 만료되었습니다.");
@@ -39,6 +41,8 @@ const routes = [
   { path: "/sellerSignup", component: SellerSignupPage },
   { path: "/houseRegister", component: HouseRegisterPage, beforeEnter: requireAuth() },
   { path: "/orders/complete", component: OrderCompletePage, beforeEnter: requireAuth() },
+  { path: "/coupon", component: CouponPage, beforeEnter: requireAuth() },
+  { path: "/my/coupon", component: MyCouponPage, beforeEnter: requireAuth() },
 ];
 
 const router = createRouter({
