@@ -1,59 +1,23 @@
 <template>
-  <div id="app">
-    <HeaderComponent />
-    <router-view v-if="!inQueue"/>
-    <WaitingQueueComponent v-if="inQueue" @queue-complete="handleQueueComplete"/>
-    <TopBottomComponent />
-    <FooterComponent />
-  </div>
+  <HeaderComponent />
+  <router-view></router-view>
+  <TopBottomComponent />
+
+  <FooterComponent />
 </template>
 
 <script>
-import axios from 'axios';
 import HeaderComponent from "./components/HeaderComponent.vue";
 import FooterComponent from "./components/FooterComponent.vue";
 import TopBottomComponent from "./components/TopBottomComponent.vue";
-import WaitingQueueComponent from "./components/WaitingQueueComponent.vue";
 
 export default {
   name: "App",
   components: {
     HeaderComponent,
-    WaitingQueueComponent,
     TopBottomComponent,
     FooterComponent,
   },
-  data() {
-    return {
-      inQueue: false,  // 초기 상태는 대기열에 있지 않은 것으로 설정
-    };
-  },
-  methods: {
-    checkQueueStatus() {
-      axios.get('http://localhost:8080/checkQueue')
-        .then(response => {
-          if (response.data.inQueue) {
-            this.inQueue = true;
-          } else {
-            this.inQueue = false;
-            this.redirectToHome();
-          }
-        })
-        .catch(error => {
-          console.error('Error checking queue status:', error);
-        });
-    },
-    handleQueueComplete() {
-      this.inQueue = false;
-      this.redirectToHome();
-    },
-    redirectToHome() {
-      this.$router.push('/');
-    }
-  },
-  created() {
-    this.checkQueueStatus();  // 컴포넌트가 생성될 때 대기 상태를 확인
-  }
 };
 </script>
 
