@@ -12,6 +12,7 @@ import HouseRegisterPage from "../pages/HouseRegisterPage";
 import CouponPage from '../pages/CouponPage';
 import MyCouponPage from '../pages/MyCouponPage';
 import OrderCompletePage from "../pages/OrderCompletePage";
+import MapPage from "../pages/MapPage";
 
 const requireAuth = () => (from, to, next) => {
   const token = localStorage.getItem("token");
@@ -37,6 +38,7 @@ const routes = [
   { path: "/", component: HomePage },
   { path: "/likes", component: LikesPage, beforeEnter: requireAuth() },
   { path: "/login", component: LoginPage },
+  { path: "/map", component: MapPage },
   { path: "/signup", component: SignupPage },
   { path: "/sellerSignup", component: SellerSignupPage },
   { path: "/houseRegister", component: HouseRegisterPage, beforeEnter: requireAuth() },
