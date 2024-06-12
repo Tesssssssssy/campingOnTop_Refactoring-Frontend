@@ -14,6 +14,9 @@
           <a href="/likes">좋아요</a>
         </li>
         <li class="nav-item">
+          <a href="/map">지도</a>
+        </li>
+        <li class="nav-item">
           <a href="/cart" target="_blank">장바구니</a>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
@@ -53,11 +56,13 @@
               <!-- 직접 나열된 링크 -->
               <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
                   width="21" />좋아요</a>
-              <a href="/my/coupon" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
+              <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자"
+                  width="21" />지도</a> 
+              <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
                   width="21" />쿠폰내역</a>
-              <a href="/cart" class="btn"><img src="@/assets/images/header/bell-solid.svg" alt="사용자"
+              <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
                   width="21" />장바구니</a>
-              <a href="/orders/complete" class="btn"><img src="@/assets/images/header/bell-solid.svg" alt="사용자"
+              <a href="/orders/complete" class="btn"><img src="@/assets/images/header/bill.png" alt="사용자"
                   width="21" />결제내역</a>
               <a href="/login" @click.prevent="logout" class="btn"><img src="@/assets/images/header/user-solid.svg"
                   alt="사용자" width="21" />로그아웃</a>
