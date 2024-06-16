@@ -9,7 +9,7 @@
         </div>
       </div>
       <div v-else>
-        <p>받은 쿠폰이 없습니다.</p>
+        <p>사용할 수 있는 쿠폰이 없습니다.</p>
       </div>
     </div>
   </template>
@@ -57,9 +57,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 100px;
+    margin-top: 300px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 100px;
     width: 50%;
     min-width: 300px;
   }
