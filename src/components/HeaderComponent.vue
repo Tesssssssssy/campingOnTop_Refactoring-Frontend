@@ -56,8 +56,7 @@
               <!-- 직접 나열된 링크 -->
               <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
                   width="21" />좋아요</a>
-              <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자"
-                  width="21" />지도</a> 
+              <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
               <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
                   width="21" />쿠폰내역</a>
               <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
@@ -77,9 +76,31 @@
       </ul>
 
       <div class="head_logo">
-        <a href="/" class="logo my-auto">
-          <img src="@/assets/images/home/logo.png" alt="Welcome home! campingOnTop" width="500px" />
-        </a>
+        <div class="logo my-auto">
+          <button @click="showModal = true" class="btn btn-primary">할인 쿠폰 발급</button>
+          <a href="/" class="logo">
+            <img src="@/assets/images/home/logo.png" alt="캠핑온탑에 방문하신 것을 환영합니다!" width="500px" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 모달창 -->
+    <div v-if="showModal" class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <div class="modal-header">
+            <h3>쿠폰 이벤트</h3>
+            <button @click="showModal = false" class="close-modal">x</button>
+          </div>
+
+          <div class="modal-body">
+            <p>숙박 10,000원 할인 쿠폰</p>
+            <button @click="requestCoupon" class="btn btn-primary">발급 받기</button>
+            <p></p>
+            <p v-if="message" class="response-message">{{ message }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -87,9 +108,44 @@
 
 <script>
 import { useMemberStore } from "/src/stores/useMemberStore";
+import { ref } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
   name: "HeaderComponents",
+  setup() {
+    const message = ref('');
+    const router = useRouter();
+    const showModal = ref(false);
+
+    const requestCoupon = async () => {
+      const token = window.localStorage.getItem("token");
+      try {
+        const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING', {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        message.value = response.data.message; // 서버에서 전달된 메시지를 사용
+        // 성공 메시지에 따라 홈 페이지로 이동할 수 있도록 로직 추가
+        if (response.data.message === "쿠폰이 발급되었습니다.") {
+          setTimeout(() => {
+            showModal.value = false;
+            router.push('/');
+          }, 2000); // 2초 후 홈으로 리다이렉트
+        }
+      } catch (error) {
+        message.value = error.response.data.message || "이미 발급받은 쿠폰입니다!";
+      }
+    };
+
+    return {
+      message,
+      showModal,
+      requestCoupon
+    };
+  },
   data() {
     return {
       isNavbarOpen: false,
@@ -175,6 +231,44 @@ export default {
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-wrapper {
+  width: 300px;
+}
+
+.modal-container {
+  background: white;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
 }
 
 .fixed-top {
