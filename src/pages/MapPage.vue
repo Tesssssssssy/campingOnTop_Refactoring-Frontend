@@ -19,6 +19,8 @@
   </template>
   
   <script>
+  import { mapStores } from "pinia";
+  import { useHouseStore } from "/src/stores/useHouseStore";
 
   export default {
     name: "MapPage",
@@ -28,7 +30,8 @@
         markers: [],
         latitude: 0,
         longitude: 0,
-        infowindow: null
+        infowindow: null,
+        centerMarker: null, // 중심 좌표를 표시하는 마커
       }
     },
     
@@ -60,6 +63,7 @@
 
     },
     computed: {
+      ...mapStores(useHouseStore),
       allSelected: {
         
       }
@@ -118,125 +122,148 @@
     //     marker.setMap(this.map);
     //   },
     // },
-    
-    initMap() {
-      const container = document.getElementById("kakaomap");
-      const options = {
-        center: new kakao.maps.LatLng(33.450701, 126.570667),
-        level: 5,
-      };
-      this.map = new kakao.maps.Map(container, options);
 
-      const currentPosition = {
-        title: '현재 위치',
-        latlng: new kakao.maps.LatLng(this.latitude, this.longitude),
-        isCurrentPosition: true // 현재 위치 표시 여부 추가
-      };
+      async initMap() {
+        const container = document.getElementById("kakaomap");
+        const options = {
+          center: new kakao.maps.LatLng(33.450701, 126.570667),
+          level: 5,
+        };
+        this.map = new kakao.maps.Map(container, options);
 
-      const positions = [
-        { title: '카카오', latlng: new kakao.maps.LatLng(33.450705, 126.570677) },
-        { title: '생태연못', latlng: new kakao.maps.LatLng(33.450936, 126.569477) },
-        { title: '텃밭', latlng: new kakao.maps.LatLng(33.450879, 126.569940) },
-        { title: '송파구청', latlng: new kakao.maps.LatLng(37.514703, 127.106747) },
-        { title: '근린공원', latlng: new kakao.maps.LatLng(33.451393, 126.570738) }
-      ];
-
-      this.displayMarkers([currentPosition, ...this.filterMarkersWithin1km(positions)]);
-
-
-      // 지도 타입 컨트롤 추가
-      const mapTypeControl = new window.kakao.maps.MapTypeControl();
-      this.map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
-
-      // 줌 컨트롤 추가
-      const zoomControl = new window.kakao.maps.ZoomControl();
-      this.map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
-
-      // 인포윈도우 객체 생성
-      this.infowindow = new kakao.maps.InfoWindow();
-
-    },
-
-    displayMarkers(markerPositions) {
-
-      if (this.markers.length > 0) {
-      this.markers.forEach((marker) => marker.setMap(null));
-      }
-
-      this.markers = markerPositions.map(pos => {
-        const markerOptions = {
-          map: this.map,
-          position: pos.latlng,
-          title: pos.title
+        // 현재 위치 설정
+        const currentPosition = {
+          title: '현재 위치',
+          latlng: new kakao.maps.LatLng(this.latitude, this.longitude),
+          isCurrentPosition: true // 현재 위치 표시 여부 추가
         };
 
-        if (!pos.isCurrentPosition) {
-          markerOptions.image = new kakao.maps.MarkerImage(
-            "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
-            new kakao.maps.Size(24, 35)
-          );
+        
+
+        try {
+          // 백엔드에서 positions 가져오기
+          const positionsResponse = await this.houseStore.getHouseListByLoc(this.latitude, this.longitude);
+          
+          const positions = positionsResponse.map(house => ({
+            title: house.name,
+            latlng: new kakao.maps.LatLng(house.latitude, house.longitude),
+            id: house.id
+          }));
+
+          // 현재 위치와 백엔드에서 가져온 positions 합치기
+          const allPositions = [currentPosition, ...positions];
+
+          // 마커 표시
+          this.displayMarkers(allPositions);
+        } catch (error) {
+          console.error('Failed to fetch positions:', error);
+          // 백엔드에서 positions를 가져오지 못한 경우, 현재 위치만 표시
+          this.displayMarkers([currentPosition]);
+        }
+        
+        this.addDragendEvent();
+
+
+        // 지도 타입 컨트롤 추가
+        const mapTypeControl = new window.kakao.maps.MapTypeControl();
+        this.map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
+
+        // 줌 컨트롤 추가
+        const zoomControl = new window.kakao.maps.ZoomControl();
+        this.map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+
+        // 인포윈도우 객체 생성
+        this.infowindow = new kakao.maps.InfoWindow();
+
+      },
+
+      displayMarkers(markerPositions) {
+
+        if (this.markers.length > 0) {
+        this.markers.forEach((marker) => marker.setMap(null));
         }
 
-        const marker = new kakao.maps.Marker(markerOptions);
-        this.addMarkerEvents(marker, pos.title, pos.latlng);
-        return marker;
-      });
+        this.markers = markerPositions.map(pos => {
+          const markerOptions = {
+            map: this.map,
+            position: pos.latlng,
+            title: pos.title
+          };
 
-      const bounds = markerPositions.reduce(
-        (bounds, pos) => bounds.extend(pos.latlng),
-        new kakao.maps.LatLngBounds()
-      );
+          if (!pos.isCurrentPosition) {
+            markerOptions.image = new kakao.maps.MarkerImage(
+              "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+              new kakao.maps.Size(24, 35)
+            );
+          }
 
-      this.map.setBounds(bounds);
+          const marker = new kakao.maps.Marker(markerOptions);
+
+          this.addMarkerEvents(marker,pos.title, pos.id);
+
+          return marker;
+        });
+
+        const bounds = markerPositions.reduce(
+          (bounds, pos) => bounds.extend(pos.latlng),
+          new kakao.maps.LatLngBounds()
+        );
+
+        this.map.setBounds(bounds);
+        
+      },
       
+      addMarkerEvents(marker, title, id) {
+        const iwContent = `
+          <div style="padding:5px;">
+            ${title}<br>
+            <a href="details/${id}" style="color:blue" target="_blank">상세 보기</a>
+          </div>`;
+
+          kakao.maps.event.addListener(marker, 'click', () => {
+            // 마커 위에 인포윈도우를 표시합니다
+            if (this.infowindow.getMap()) {
+              this.infowindow.close();
+            } else {
+              this.infowindow.setContent(iwContent),
+              this.infowindow.open(this.map, marker);
+            }
+          });
+            
+        // 인포윈도우 마우스 올리고 내려서 on/off
+        
+        // kakao.maps.event.addListener(marker, 'mouseover', () => {
+        //   this.infowindow.setContent(iwContent);
+        //   this.infowindow.open(this.map, marker);
+        // });
+
+        // kakao.maps.event.addListener(marker, 'mouseout', () => {
+        //   this.infowindow.close();
+        // });
+      },
+
+      addDragendEvent() {
+        kakao.maps.event.addListener(this.map, 'dragend', () => {
+          const latlng = this.map.getCenter();
+        
+          // 기존 중심 마커 제거
+          if (this.centerMarker) {
+            this.centerMarker.setMap(null);
+          }
+
+          // 새로운 중심 마커 생성 및 추가
+          this.centerMarker = new kakao.maps.Marker({
+            map: this.map,
+            position: latlng,
+            title: "중심 좌표",
+            image: new kakao.maps.MarkerImage(
+              "redplaceholder.png", // 빨간색 마커 이미지 URL
+              new kakao.maps.Size(38, 38)
+            )
+          });
+        });
+      },
     },
-    
-    addMarkerEvents(marker, title, latlng) {
-    const iwContent = `
-      <div style="padding:5px;">
-        ${title}<br>
-        <a href="https://map.kakao.com/link/map/${title},${latlng.getLat()},${latlng.getLng()}" style="color:blue" target="_blank">큰지도보기</a>
-        <a href="https://map.kakao.com/link/to/${title},${latlng.getLat()},${latlng.getLng()}" style="color:blue" target="_blank">길찾기</a>
-      </div>
-    `;
-
-    kakao.maps.event.addListener(marker, 'mouseover', () => {
-      this.infowindow.setContent(iwContent);
-      this.infowindow.open(this.map, marker);
-    });
-
-    kakao.maps.event.addListener(marker, 'mouseout', () => {
-      this.infowindow.close();
-    });
-  },
-
-    filterMarkersWithin1km(markerPositions) {
-    return markerPositions.filter(pos => {
-      const distance = this.calculateDistance(
-        this.latitude,
-        this.longitude,
-        pos.latlng.getLat(),
-        pos.latlng.getLng()
-      );
-      return distance <= 1; // 1km 내의 마커만 필터링
-    });
-  },
-  calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // 지구 반경 (단위: km)
-    const dLat = this.deg2rad(lat2 - lat1);
-    const dLon = this.deg2rad(lon2 - lon1);
-    const a = 
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // 거리 계산 (단위: km)
-    return distance;
-  },
-  deg2rad(deg) {
-    return deg * (Math.PI / 180);
-  }
-  },
     components: {},
 
   };
