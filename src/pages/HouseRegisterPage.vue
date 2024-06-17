@@ -29,7 +29,7 @@
             <label for="address">도로명 주소: </label><br />
             <input class="input-group-type" type="text" id="address" name="address" placeholder="서울 동작구 보라매로 87 (신이빌딩)"
               v-model="formData.address" />
-            <button type="button" @click="openPostcode">주소 검색</button>
+            <button class="address-btn" @click="openPostcode">주소 검색</button>
           </div>
           <br />
           <div class="input-group">
@@ -214,6 +214,21 @@ body {
   padding-top: 50px;
 }
 
+/* 주소 검색 버튼 스타일 */
+.address-btn {
+  padding: 10px 16px;
+  margin-left: 30px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.address-btn:hover {
+  background-color: #0056b3;
+}
+
 #wrap {
   position: fixed;
   left: 50%;
@@ -312,7 +327,7 @@ input[type="number"] {
 }
 
 .btn {
-  background-color: #24a1b4;
+  background-color: #007BFF;
   /* Green */
   border: none;
   color: white;
