@@ -38,7 +38,7 @@
     created(){
       if (!("geolocation" in navigator)) {
       return;
-    }
+      }
 
       // get position
       navigator.geolocation.getCurrentPosition(pos => {
@@ -68,61 +68,16 @@
         
       }
     },
+
     watch: {
     },
+
     mounted() {
-      // // api 스크립트 소스 불러오기 및 지도 출력
-      // if (window.kakao && window.kakao.maps) {
-      //   this.loadMap();
-      // } else {
-      //   this.loadScript();
-      // }
     },
+
     unmounted() {},
+
     methods: {
-    //     // api 불러오기
-    //   loadScript() {
-    //     const script = document.createElement("script");
-    //     script.src =
-    //       "//dapi.kakao.com/v2/maps/sdk.js?appkey=f57d950fe148fe375f48f1edaf040af8&autoload=false"; 
-    //     script.onload = () => window.kakao.maps.load(this.loadMap); 
-
-    //     document.head.appendChild(script);
-    //   },
-    //   // 맵 출력하기
-    //   loadMap() {
-    //     const container = document.getElementById("kakaomap"); 
-    //     const options = {
-    //       center: new window.kakao.maps.LatLng(37.470377, 127.154379), 
-    //       level: 3
-    //     };
-
-    //     this.map = new window.kakao.maps.Map(container, options); 
-    //     this.loadMaker();
-
-    //       // 지도 타입 컨트롤 추가
-    //     const mapTypeControl = new window.kakao.maps.MapTypeControl();
-    //     this.map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
-
-    //     // 줌 컨트롤 추가
-    //     const zoomControl = new window.kakao.maps.ZoomControl();
-    //     this.map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
-    //   },
-    //   // 지정한 위치에 마커 불러오기
-    //   loadMaker() {
-    //     const markerPosition = new window.kakao.maps.LatLng(
-    //       37.470377,
-    //       127.154379
-    //     );
-
-    //     const marker = new window.kakao.maps.Marker({
-    //       position: markerPosition,
-    //     });
-
-    //     marker.setMap(this.map);
-    //   },
-    // },
-
       async initMap() {
         const container = document.getElementById("kakaomap");
         const options = {
@@ -132,37 +87,22 @@
         this.map = new kakao.maps.Map(container, options);
 
         // 현재 위치 설정
-        const currentPosition = {
+        this.currentPosition = {
           title: '현재 위치',
           latlng: new kakao.maps.LatLng(this.latitude, this.longitude),
           isCurrentPosition: true // 현재 위치 표시 여부 추가
         };
 
-        
-
         try {
-          // 백엔드에서 positions 가져오기
-          const positionsResponse = await this.houseStore.getHouseListByLoc(this.latitude, this.longitude);
-          
-          const positions = positionsResponse.map(house => ({
-            title: house.name,
-            latlng: new kakao.maps.LatLng(house.latitude, house.longitude),
-            id: house.id
-          }));
-
-          // 현재 위치와 백엔드에서 가져온 positions 합치기
-          const allPositions = [currentPosition, ...positions];
-
-          // 마커 표시
-          this.displayMarkers(allPositions);
+          // 현재 위치를 기반으로 백엔드에서 positions 가져오기
+          await this.fetchAndDisplayPositions(this.latitude, this.longitude, this.currentPosition);
         } catch (error) {
           console.error('Failed to fetch positions:', error);
           // 백엔드에서 positions를 가져오지 못한 경우, 현재 위치만 표시
-          this.displayMarkers([currentPosition]);
+          this.displayMarkers([this.currentPosition]);
         }
-        
-        this.addDragendEvent();
 
+        this.addDragendEvent();
 
         // 지도 타입 컨트롤 추가
         const mapTypeControl = new window.kakao.maps.MapTypeControl();
@@ -174,13 +114,33 @@
 
         // 인포윈도우 객체 생성
         this.infowindow = new kakao.maps.InfoWindow();
+      },
 
+      async fetchAndDisplayPositions(latitude, longitude, centerPosition) {
+        const positionsResponse = await this.houseStore.getHouseListByLoc(latitude, longitude);
+
+        const positions = positionsResponse.map(house => ({
+          title: house.name,
+          latlng: new kakao.maps.LatLng(house.latitude, house.longitude),
+          id: house.id
+        }));
+
+        // 중심 위치와 백엔드에서 가져온 positions 합치기
+        const allPositions = [centerPosition, ...positions];
+
+        // 마커 표시
+        this.displayMarkers(allPositions);
+
+        // 기존 원 제거
+        this.removeRadiusCircle();
+
+        // 반경 1km 표시하는 원 추가
+        this.displayRadiusCircle(centerPosition.latlng);
       },
 
       displayMarkers(markerPositions) {
-
-        if (this.markers.length > 0) {
-        this.markers.forEach((marker) => marker.setMap(null));
+        if (this.markers && this.markers.length > 0) {
+          this.markers.forEach((marker) => marker.setMap(null));
         }
 
         this.markers = markerPositions.map(pos => {
@@ -190,7 +150,16 @@
             title: pos.title
           };
 
-          if (!pos.isCurrentPosition) {
+          if (pos.title === '현재 위치') {
+            // 기본 마커 이미지 설정 (현재 위치)
+          } else if (pos.title === '중심 좌표') {
+            // 중심 마커 이미지 설정
+            markerOptions.image = new kakao.maps.MarkerImage(
+              "redplaceholder.png", // 빨간색 마커 이미지 URL
+              new kakao.maps.Size(38, 38)
+            );
+          } else {
+            // 백엔드에서 불러온 마커 이미지 설정
             markerOptions.image = new kakao.maps.MarkerImage(
               "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
               new kakao.maps.Size(24, 35)
@@ -199,7 +168,7 @@
 
           const marker = new kakao.maps.Marker(markerOptions);
 
-          this.addMarkerEvents(marker,pos.title, pos.id);
+          this.addMarkerEvents(marker, pos.title, pos.id);
 
           return marker;
         });
@@ -210,9 +179,8 @@
         );
 
         this.map.setBounds(bounds);
-        
       },
-      
+
       addMarkerEvents(marker, title, id) {
         const iwContent = `
           <div style="padding:5px;">
@@ -220,32 +188,21 @@
             <a href="details/${id}" style="color:blue" target="_blank">상세 보기</a>
           </div>`;
 
-          kakao.maps.event.addListener(marker, 'click', () => {
-            // 마커 위에 인포윈도우를 표시합니다
-            if (this.infowindow.getMap()) {
-              this.infowindow.close();
-            } else {
-              this.infowindow.setContent(iwContent),
-              this.infowindow.open(this.map, marker);
-            }
-          });
-            
-        // 인포윈도우 마우스 올리고 내려서 on/off
-        
-        // kakao.maps.event.addListener(marker, 'mouseover', () => {
-        //   this.infowindow.setContent(iwContent);
-        //   this.infowindow.open(this.map, marker);
-        // });
-
-        // kakao.maps.event.addListener(marker, 'mouseout', () => {
-        //   this.infowindow.close();
-        // });
+        kakao.maps.event.addListener(marker, 'click', () => {
+          // 마커 위에 인포윈도우를 표시합니다
+          if (this.infowindow.getMap()) {
+            this.infowindow.close();
+          } else {
+            this.infowindow.setContent(iwContent);
+            this.infowindow.open(this.map, marker);
+          }
+        });
       },
 
       addDragendEvent() {
-        kakao.maps.event.addListener(this.map, 'dragend', () => {
+        kakao.maps.event.addListener(this.map, 'dragend', async () => {
           const latlng = this.map.getCenter();
-        
+
           // 기존 중심 마커 제거
           if (this.centerMarker) {
             this.centerMarker.setMap(null);
@@ -261,9 +218,39 @@
               new kakao.maps.Size(38, 38)
             )
           });
+
+          // 중심 좌표 기반으로 백엔드에서 숙소 불러오기
+          try {
+            await this.fetchAndDisplayPositions(latlng.getLat(), latlng.getLng(), { title: '중심 좌표', latlng: latlng });
+          } catch (error) {
+            console.error('Failed to fetch positions:', error);
+          }
         });
       },
+
+      displayRadiusCircle(centerLatLng) {
+        this.radiusCircle = new kakao.maps.Circle({
+          center: centerLatLng,  // 원의 중심 좌표입니다
+          radius: 1000,          // 미터 단위의 원의 반지름입니다 (1km)
+          strokeWeight: 2,       // 선의 두께입니다
+          strokeColor: '#2E63F5', // 선의 색깔입니다
+          strokeOpacity: 0.7,    // 선의 불투명도 (0에서 1 사이입니다)
+          strokeStyle: 'solid',  // 선의 스타일입니다
+          fillColor: '#2E63F5',   // 채우기 색깔입니다
+          fillOpacity: 0.1       // 채우기 불투명도 (0에서 1 사이입니다)
+        });
+
+        this.radiusCircle.setMap(this.map);
+      },
+
+      removeRadiusCircle() {
+        if (this.radiusCircle) {
+          this.radiusCircle.setMap(null);
+          this.radiusCircle = null;
+        }
+      }
     },
+
     components: {},
 
   };
