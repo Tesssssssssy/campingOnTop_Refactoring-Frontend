@@ -90,6 +90,26 @@ export const useHouseStore = defineStore("house", {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
       }
     },
+
+    async getHouseListByLoc(latitude, longitude) {
+      try {
+        let response = await axios.get(
+          backend +
+            "/house/find/location" +
+            "?latitude=" +
+            latitude +
+            "&longitude=" +
+            longitude
+        );
+        this.houseList = response.data;
+
+        console.log(response);
+        return response.data;
+      } catch (error) {
+        console.error("해당 주소 근처에 숙소들이 존재하지 않습니다");
+      }
+    },
+
     async getHouseListOrderByPriceDesc(page, size) {
       try {
         let response = await axios.get(
