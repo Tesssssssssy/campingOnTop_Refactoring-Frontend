@@ -185,11 +185,26 @@
       },
 
       addMarkerEvents(marker, title, id) {
-
-        // 현재 위치 마커와 중심 좌표 마커는 인포윈도우를 열지 않음
+        // 현재 위치 마커와 중심 좌표 마커는 인포윈도우에서 상세보기가 없음
         if (title === '현재 위치' || title === '중심 좌표') {
-            return;
-          }
+          kakao.maps.event.addListener(marker, 'mouseover', () => {
+            const iwContent = `
+              <div style="padding: 5px">
+                ${title}<br>
+              </div>
+            `;
+            if (this.infowindow) {
+              this.infowindow.setContent(iwContent);
+              this.infowindow.open(this.map, marker);
+            }
+          });
+
+          kakao.maps.event.addListener(marker, 'mouseout', () => {
+            if (this.infowindow) {
+              this.infowindow.close();
+            }
+          });
+        }
 
         const iwContent = `
           <div style="padding:5px;">
@@ -198,15 +213,12 @@
           </div>`;
 
         kakao.maps.event.addListener(marker, 'click', () => {
-          // 마커 위에 인포윈도우를 표시합니다
-          this.infowindow.setContent(iwContent);
-          this.infowindow.open(this.map, marker);
-        });
-
-        kakao.maps.event.addListener(this.map, 'click', () => {
-          // 인포윈도우를 클릭해서 끄기
+          // 마커 위에 인포윈도우를 표시하고 인포윈도우를 클릭하면 끈다
           if (this.infowindow.getMap()){
             this.infowindow.close();
+          } else {
+            this.infowindow.setContent(iwContent);
+            this.infowindow.open(this.map, marker);
           }
         });
 
