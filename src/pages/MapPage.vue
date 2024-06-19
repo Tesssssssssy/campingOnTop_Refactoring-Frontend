@@ -8,11 +8,10 @@
               <li>위치 기반으로 숙소 서비스를 이용해보세요.</li>
             </ul>
           </div>
-  
-          <table class="map__list">
+          <table class="map__container">
             <div id="kakaomap"></div>
+            <button id="currentbutton" @click="resetToCurrentPosition">현재 위치로 이동</button>
           </table>
-         
         </section>
       </main>
     </div>
@@ -122,7 +121,8 @@
         const positions = positionsResponse.map(house => ({
           title: house.name,
           latlng: new kakao.maps.LatLng(house.latitude, house.longitude),
-          id: house.id
+          id: house.id,
+          imageUrl: house.filenames
         }));
 
         // 중심 위치와 백엔드에서 가져온 positions 합치기
@@ -151,37 +151,46 @@
           };
 
           if (pos.title === '현재 위치') {
-            // 기본 마커 이미지 설정 (현재 위치)
+            // 현재 위치 마커 이미지 설정
           } else if (pos.title === '중심 좌표') {
-            // 중심 마커 이미지 설정
+            // 중심 좌표 마커 이미지 설정
             markerOptions.image = new kakao.maps.MarkerImage(
               "redplaceholder.png", // 빨간색 마커 이미지 URL
               new kakao.maps.Size(38, 38)
             );
           } else {
             // 백엔드에서 불러온 마커 이미지 설정
-            markerOptions.image = new kakao.maps.MarkerImage(
-              "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
-              new kakao.maps.Size(24, 35)
-            );
+            markerOptions.image = this.getMarkerImage(pos.imageUrl);
           }
 
           const marker = new kakao.maps.Marker(markerOptions);
-
           this.addMarkerEvents(marker, pos.title, pos.id);
 
           return marker;
         });
 
-        const bounds = markerPositions.reduce(
-          (bounds, pos) => bounds.extend(pos.latlng),
-          new kakao.maps.LatLngBounds()
-        );
+        if (markerPositions.length > 0) {
+          const centerPos = markerPositions[0].latlng;
+          this.map.setCenter(centerPos);
+        }
+        // 줌 레벨을 특정 레벨로 설정 (예: 7)
+        this.map.setLevel(5);
+      },
 
-        this.map.setBounds(bounds);
+      getMarkerImage(imageUrl) {
+        return new kakao.maps.MarkerImage(
+          imageUrl,
+          new kakao.maps.Size(35, 35),
+        );
       },
 
       addMarkerEvents(marker, title, id) {
+
+        // 현재 위치 마커와 중심 좌표 마커는 인포윈도우를 열지 않음
+        if (title === '현재 위치' || title === '중심 좌표') {
+            return;
+          }
+
         const iwContent = `
           <div style="padding:5px;">
             ${title}<br>
@@ -190,11 +199,21 @@
 
         kakao.maps.event.addListener(marker, 'click', () => {
           // 마커 위에 인포윈도우를 표시합니다
-          if (this.infowindow.getMap()) {
+          this.infowindow.setContent(iwContent);
+          this.infowindow.open(this.map, marker);
+        });
+
+        kakao.maps.event.addListener(this.map, 'click', () => {
+          // 인포윈도우를 클릭해서 끄기
+          if (this.infowindow.getMap()){
             this.infowindow.close();
-          } else {
-            this.infowindow.setContent(iwContent);
-            this.infowindow.open(this.map, marker);
+          }
+        });
+
+        kakao.maps.event.addListener(this.map, 'dragend', () => {
+          // 맵을 드래그 해서 인포윈도우 끄기
+          if (this.infowindow.getMap()){
+            this.infowindow.close();
           }
         });
       },
@@ -202,6 +221,7 @@
       addDragendEvent() {
         kakao.maps.event.addListener(this.map, 'dragend', async () => {
           const latlng = this.map.getCenter();
+          const currentLevel = this.map.getLevel(); 
 
           // 기존 중심 마커 제거
           if (this.centerMarker) {
@@ -225,6 +245,8 @@
           } catch (error) {
             console.error('Failed to fetch positions:', error);
           }
+
+          this.map.setLevel(currentLevel);
         });
       },
 
@@ -248,6 +270,38 @@
           this.radiusCircle.setMap(null);
           this.radiusCircle = null;
         }
+      },
+
+      async resetToCurrentPosition() {
+        // 기존 중심 마커 제거
+        if (this.centerMarker) {
+          this.centerMarker.setMap(null);
+        }
+
+        // 기존 원 제거
+        this.removeRadiusCircle();
+
+        // 현재 위치를 중심으로 지도 설정 및 마커 추가
+        const currentPosition = this.currentPosition.latlng;
+        this.map.setCenter(currentPosition);
+        this.map.setLevel(5); // 기본 줌 레벨로 설정
+
+        // 현재 위치 마커 다시 추가
+        this.centerMarker = new kakao.maps.Marker({
+          map: this.map,
+          position: currentPosition,
+          title: "현재 위치"
+        });
+
+        // 반경 1km 원 다시 추가
+        this.displayRadiusCircle(currentPosition);
+
+        // 중심 위치를 기반으로 백엔드에서 숙소 불러오기
+        try {
+          await this.fetchAndDisplayPositions(currentPosition.getLat(), currentPosition.getLng(), this.currentPosition);
+        } catch (error) {
+          console.error('Failed to fetch positions:', error);
+        }
       }
     },
 
@@ -264,6 +318,14 @@
   * {
     box-sizing: border-box;
   }
+
+  .page-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   
   p,
   span {
@@ -275,19 +337,25 @@
   }
   
   #main {
-    padding-right: 200px;
+    width: 100%;
+    height: 100%;
   }
   
   .map {
-    width: 120%;
-    margin: auto;
-    padding: 5px;
+    width: 100%;
+    max-width: 1000px; /* 최대 너비 설정 */
+    margin: 0 auto;
+  }
+
+  .map__container {
+    position: relative;
+    width: 100%;
+    height: 500px;
   }
   
   .map ul {
     background-color: whitesmoke;
     padding: 30px;
-    margin-bottom: 50px;
     border: whitesmoke solid 1px;
     border-radius: 5px;
     font-size: 13px;
@@ -299,7 +367,6 @@
   }
   
   table {
-    border-top: solid 1.5px black;
     border-collapse: collapse;
     width: 100%;
     font-size: 14px;
@@ -744,10 +811,21 @@
     }
   }
 
-  #kakaomap{
-    width: 1000px;
-    height:500px;
-    margin: 0 auto;
+  #kakaomap {
+    width: 100%;
+    height: 100%;
+  }
+
+  #currentbutton {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10; /* 버튼이 지도 위에 표시되도록 z-index 설정 */
+    padding: 10px 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
   }
   </style>
   
