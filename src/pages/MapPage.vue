@@ -30,6 +30,7 @@
         latitude: 0,
         longitude: 0,
         infowindow: null,
+        overlay: null,
         centerMarker: null, // 중심 좌표를 표시하는 마커
       }
     },
@@ -62,10 +63,7 @@
 
     },
     computed: {
-      ...mapStores(useHouseStore),
-      allSelected: {
-        
-      }
+      ...mapStores(useHouseStore)
     },
 
     watch: {
@@ -113,6 +111,14 @@
 
         // 인포윈도우 객체 생성
         this.infowindow = new kakao.maps.InfoWindow();
+        // 오버레이 객체 생성
+        this.overlay = new kakao.maps.CustomOverlay({
+          map: null,
+          position: new kakao.maps.LatLng(0, 0),
+          content: '',
+          xAnchor: 0.5,
+          yAnchor: 1
+        });
       },
 
       async fetchAndDisplayPositions(latitude, longitude, centerPosition) {
@@ -122,7 +128,7 @@
           title: house.name,
           latlng: new kakao.maps.LatLng(house.latitude, house.longitude),
           id: house.id,
-          imageUrl: house.filenames
+          imageUrl: house.filenames[0]
         }));
 
         // 중심 위치와 백엔드에서 가져온 positions 합치기
@@ -164,7 +170,7 @@
           }
 
           const marker = new kakao.maps.Marker(markerOptions);
-          this.addMarkerEvents(marker, pos.title, pos.id);
+          this.addMarkerEvents(marker, pos.title, pos.id, pos.imageUrl);
 
           return marker;
         });
@@ -177,57 +183,76 @@
         this.map.setLevel(5);
       },
 
-      getMarkerImage(imageUrl) {
+      getMarkerImage() {
         return new kakao.maps.MarkerImage(
-          imageUrl,
+          "shop.png",
           new kakao.maps.Size(35, 35),
         );
       },
 
-      addMarkerEvents(marker, title, id) {
+      addMarkerEvents(marker, title, id, imageUrl) { 
         // 현재 위치 마커와 중심 좌표 마커는 인포윈도우에서 상세보기가 없음
         if (title === '현재 위치' || title === '중심 좌표') {
           kakao.maps.event.addListener(marker, 'mouseover', () => {
             const iwContent = `
-              <div style="padding: 5px">
-                ${title}<br>
+              <div class="wrap-1">
+                <div class="info">
+                  <div class="title">
+                      ${title}
+                  </div>
+                </div>
               </div>
             `;
-            if (this.infowindow) {
-              this.infowindow.setContent(iwContent);
-              this.infowindow.open(this.map, marker);
+            if (this.overlay.getMap()) {
+                this.overlay.setMap(null);
+            } else {
+              this.overlay.setContent(iwContent);
+              this.overlay.setPosition(marker.getPosition());
+              this.overlay.setMap(this.map);
             }
           });
 
           kakao.maps.event.addListener(marker, 'mouseout', () => {
             if (this.infowindow) {
-              this.infowindow.close();
+              this.overlay.setMap(null);
             }
+          });
+        } else {
+           const iwContent = `
+            <div class="wrap">
+              <div class="info">
+                <div class="img">
+                  <img src="${imageUrl}" width="150" height="150">
+                </div>
+                <div class="body">
+                  <div class="title">
+                    ${title}
+                  </div>
+                  <div class="desc">
+                    <div class="ellipsis">
+                      <a href="details/${id}" style="color: blue;" target="_blank">상세보기 페이지로 이동</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+
+          kakao.maps.event.addListener(marker, 'click', () => {
+            if (this.overlay.getMap()) {
+                this.overlay.setMap(null);
+            } else {
+              this.overlay.setContent(iwContent);
+              this.overlay.setPosition(marker.getPosition());
+              this.overlay.setMap(this.map);
+            }
+          });
+
+          kakao.maps.event.addListener(this.map, 'dragend', () => {
+            // 맵을 드래그 해서 오버레이 끄기
+            this.overlay.setMap(null);
           });
         }
 
-        const iwContent = `
-          <div style="padding:5px;">
-            ${title}<br>
-            <a href="details/${id}" style="color:blue" target="_blank">상세 보기</a>
-          </div>`;
-
-        kakao.maps.event.addListener(marker, 'click', () => {
-          // 마커 위에 인포윈도우를 표시하고 인포윈도우를 클릭하면 끈다
-          if (this.infowindow.getMap()){
-            this.infowindow.close();
-          } else {
-            this.infowindow.setContent(iwContent);
-            this.infowindow.open(this.map, marker);
-          }
-        });
-
-        kakao.maps.event.addListener(this.map, 'dragend', () => {
-          // 맵을 드래그 해서 인포윈도우 끄기
-          if (this.infowindow.getMap()){
-            this.infowindow.close();
-          }
-        });
       },
 
       addDragendEvent() {
