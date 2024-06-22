@@ -102,6 +102,7 @@ import { useMemberStore } from "/src/stores/useMemberStore";
 import { useCartStore } from "/src/stores/useCartStore";
 import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
+import { getTokenFromCookie } from "@/utils/authCookies";
 
 export default {
   data() {
@@ -150,10 +151,11 @@ export default {
       }
     },
     async fetchCoupons() {
+      const token = getTokenFromCookie('accessToken');
       try {
         const response = await axios.get('http://localhost:8080/coupons/my', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${token}`
           }
         });
         this.coupons = response.data;
@@ -165,7 +167,7 @@ export default {
   },
   components: {},
   async mounted() {
-    const token = window.localStorage.getItem("token");
+    const token = getTokenFromCookie('accessToken');
     if (token) {
       try {
         await this.cartStore.getCartList(VueJwtDecode.decode(token).id);

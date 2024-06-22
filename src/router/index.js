@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import VueJwtDecode from "vue-jwt-decode";
+import { getTokenFromCookie } from "@/utils/authCookies";
 
 import CartPage from "../pages/CartPage";
 import DetailsPage from "../pages/DetailsPage";
@@ -14,20 +15,24 @@ import MyCouponPage from '../pages/MyCouponPage';
 import OrderCompletePage from "../pages/OrderCompletePage";
 import MapPage from "../pages/MapPage";
 
-const requireAuth = () => (from, to, next) => {
-  const token = localStorage.getItem("token");
+const requireAuth = () => (to, from, next) => {
+  const token = getTokenFromCookie('refreshToken');
   if (!token) {
     next("/login");
   } else {
-    const decoded = VueJwtDecode.decode(token);
-    const currentTime = Math.floor(Date.now() / 1000);
+    try {
+      const decoded = VueJwtDecode.decode(token);
+      const currentTime = Math.floor(Date.now() / 1000);
 
-    if (decoded.exp < currentTime) {
-      window.localStorage.removeItem("token"); // 토큰 제거
-      alert("로그인 시간이 만료되었습니다.");
-      next("/login"); // 로그인 페이지로 리다이렉트
-    } else {
-      next(); // 유효한 토큰, 페이지 접근 허용
+      if (decoded.exp < currentTime) {
+        alert("로그인 시간이 만료되었습니다.");
+        next("/login"); // 로그인 페이지로 리다이렉트
+      } else {
+        next(); // 유효한 토큰, 페이지 접근 허용
+      }
+    } catch (error) {
+      console.error("Token decoding failed:", error);
+      next("/login"); // 디코딩 실패 시 로그인 페이지로 리다이렉트
     }
   }
 };

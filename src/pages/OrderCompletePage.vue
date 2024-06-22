@@ -25,6 +25,8 @@
 
 <script>
 import axios from "axios";
+import { getTokenFromCookie } from "@/utils/authCookies";
+
 // const backend = "http://www.campingontop.kro.kr/api"; 
 const backend = "http://localhost:8080"; 
 
@@ -37,7 +39,7 @@ export default {
   },
   methods: {
     async getOrderList() {
-      let token = localStorage.getItem("token");
+      const token = getTokenFromCookie('accessToken');
       let response = await axios.get(backend + "/orders/list", {
         headers: {
           Authorization: `Bearer ${token}`

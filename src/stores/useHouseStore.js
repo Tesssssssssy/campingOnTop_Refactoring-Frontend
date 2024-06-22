@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { getTokenFromCookie } from "@/utils/authCookies"; // 쿠키 관리 유틸리티 임포트
 
 // const backend = "http://www.campingontop.kro.kr/api"; 
-const backend = "http://localhost:8080"; 
+const backend = "http://localhost:8080";
 
 export const useHouseStore = defineStore("house", {
   state: () => ({
@@ -56,12 +57,12 @@ export const useHouseStore = defineStore("house", {
       try {
         let response = await axios.get(
           backend +
-            "/house/find/name?page=" +
-            page +
-            "&size=" +
-            size +
-            "&name=" +
-            name
+          "/house/find/name?page=" +
+          page +
+          "&size=" +
+          size +
+          "&name=" +
+          name
         );
         this.houseList = response.data;
 
@@ -75,12 +76,12 @@ export const useHouseStore = defineStore("house", {
       try {
         let response = await axios.get(
           backend +
-            "/house/find/address?page=" +
-            page +
-            "&size=" +
-            size +
-            "&address=" +
-            addr
+          "/house/find/address?page=" +
+          page +
+          "&size=" +
+          size +
+          "&address=" +
+          addr
         );
         this.houseList = response.data;
 
@@ -95,11 +96,11 @@ export const useHouseStore = defineStore("house", {
       try {
         let response = await axios.get(
           backend +
-            "/house/find/location" +
-            "?latitude=" +
-            latitude +
-            "&longitude=" +
-            longitude
+          "/house/find/location" +
+          "?latitude=" +
+          latitude +
+          "&longitude=" +
+          longitude
         );
         this.houseList = response.data;
 
@@ -152,35 +153,35 @@ export const useHouseStore = defineStore("house", {
     async createHouse(postCreateHouseDtoReq) {
       try {
         const formData = new FormData();
-    
+
         // Append JSON data as a blob
         const jsonBlob = new Blob([JSON.stringify(postCreateHouseDtoReq)], {
           type: 'application/json',
         });
         formData.append('postCreateHouseDtoReq', jsonBlob);
-    
+
         // Append files
         postCreateHouseDtoReq.uploadFiles.forEach((file) => {
           formData.append('uploadFiles', file);
         });
-    
-        const token = localStorage.getItem('token');
-    
+
+        const token = getTokenFromCookie('accessToken'); // 토큰 쿠키에서 가져오기
+
         const headers = {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
         };
-    
+
         const response = await axios.post(backend + '/house/create', formData, {
           headers,
         });
-    
+
         console.log(response.data);
         return response.data;
       } catch (error) {
         console.error(error);
       }
     },
-    
+
   },
 });
