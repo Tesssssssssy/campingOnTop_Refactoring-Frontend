@@ -16,6 +16,7 @@
   
   <script>
   import axios from 'axios';
+  import { getTokenFromCookie } from "@/utils/authCookies";
   
   export default {
     data() {
@@ -28,10 +29,11 @@
     },
     methods: {
       async fetchCoupons() {
+        const token = getTokenFromCookie('accessToken');
         try {
           const response = await axios.get('http://localhost:8080/coupons/my', {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`
+              Authorization: `Bearer ${token}`
             }
           });
           this.coupons = response.data;

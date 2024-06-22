@@ -8,17 +8,8 @@
         <div class="card">
           <div class="swiper-container" style="height: 500px">
             <div class="swiper-wrapper">
-              <div
-                class="swiper-slide"
-                v-for="(filename, index) in houseDetails.filenames"
-                :key="index"
-              >
-                <img
-                  :data-src="filename"
-                  class="swiper-lazy"
-                  alt=""
-                  width="100%"
-                />
+              <div class="swiper-slide" v-for="(filename, index) in houseDetails.filenames" :key="index">
+                <img :data-src="filename" class="swiper-lazy" alt="" width="100%" />
                 <div class="swiper-lazy-preloader"></div>
               </div>
             </div>
@@ -118,33 +109,20 @@
 
           <li>
             <span class="desc">추가 취소 규정</span>
-            <span class="def red right policy cancelplong"
-              >장기숙박규정 취소</span
-            >
+            <span class="def red right policy cancelplong">장기숙박규정 취소</span>
           </li>
 
           <span class="cart_right" @click="likesHouse()"> ❤️ 좋아요 </span>
           <span class="cart_right"> ❤️ {{ houseDetails.likeCnt }} </span>
           <div class="cart_date_1">
             <div class="cart_date">
-              <label for="checkInDate" style="padding-left: 18px"
-                >체크인 날짜:
+              <label for="checkInDate" style="padding-left: 18px">체크인 날짜:
               </label>
-              <input
-                type="date"
-                id="checkInDate"
-                class="checkDate"
-                v-model="checkInDate"
-              />
+              <input type="date" id="checkInDate" class="checkDate" v-model="checkInDate" />
             </div>
             <div class="cart_date">
               <label for="checkOutDate">체크아웃 날짜: </label>
-              <input
-                type="date"
-                id="checkOutDate"
-                class="checkDate"
-                v-model="checkOutDate"
-              />
+              <input type="date" id="checkOutDate" class="checkDate" v-model="checkOutDate" />
             </div>
 
             <span class="cart_right1" @click="addHouseToCart()">
@@ -153,20 +131,10 @@
           </div>
         </ul>
 
-        <ConfirmDialogComponent
-          v-if="showCartConfirmDialog"
-          :isVisible="showCartConfirmDialog"
-          message="장바구니로 이동하시겠습니까?"
-          :onConfirm="goToCart"
-          :onCancel="cancelGoToCart"
-        />
-        <ConfirmDialogComponent
-          v-if="showLikesConfirmDialog"
-          :isVisible="showLikesConfirmDialog"
-          message="좋아요 목록으로 이동하시겠습니까?"
-          :onConfirm="goToLikes"
-          :onCancel="cancelGoToLikes"
-        />
+        <ConfirmDialogComponent v-if="showCartConfirmDialog" :isVisible="showCartConfirmDialog"
+          message="장바구니로 이동하시겠습니까?" :onConfirm="goToCart" :onCancel="cancelGoToCart" />
+        <ConfirmDialogComponent v-if="showLikesConfirmDialog" :isVisible="showLikesConfirmDialog"
+          message="좋아요 목록으로 이동하시겠습니까?" :onConfirm="goToLikes" :onCancel="cancelGoToLikes" />
       </section>
 
       <!--
@@ -387,7 +355,6 @@ export default {
     },
     async addHouseToCart() {
       try {
-        const token = window.localStorage.getItem("token");
         const houseId = this.houseDetails.id;
 
         const requestBody = {
@@ -396,10 +363,7 @@ export default {
           checkOut: this.checkOutDate,
         };
 
-        const response = await this.cartStore.addHouseToCart(
-          token,
-          requestBody
-        );
+        const response = await this.cartStore.addHouseToCart(requestBody);
 
         if (response.status === 200 && response.data) {
           console.log("House added to cart successfully!");
@@ -441,6 +405,7 @@ export default {
 .image_desc {
   margin-top: 30px;
 }
+
 .swiper-container {
   max-width: 1200px;
   margin-left: auto;
@@ -448,19 +413,24 @@ export default {
   border: none;
   max-height: 500px;
 }
+
 .swiper-slide {
   width: 30px;
   padding-top: 30px;
 }
+
 /* 스와이퍼 슬라이드 이미지 스타일 */
 .swiper-slide img {
   height: auto;
   object-fit: cover;
 }
+
 .cart__list {
   width: 100%;
-  max-width: 1200px; /* Set a maximum width for the table */
-  margin: 0 auto 30px; /* Center the table horizontally */
+  max-width: 1200px;
+  /* Set a maximum width for the table */
+  margin: 0 auto 30px;
+  /* Center the table horizontally */
   font-size: 14px;
   overflow-x: auto;
 }
@@ -470,19 +440,25 @@ export default {
 .swiper-button-next {
   color: #000;
   position: absolute;
-  top: 50%; /* 버튼을 세로 중앙에 위치 */
-  width: 50px; /* 버튼의 가로 크기 */
-  height: 50px; /* 버튼의 세로 크기 */
-  margin-top: -25px; /* 버튼의 세로 크기의 절반 값으로 마진을 설정하여 중앙에 위치 */
+  top: 50%;
+  /* 버튼을 세로 중앙에 위치 */
+  width: 50px;
+  /* 버튼의 가로 크기 */
+  height: 50px;
+  /* 버튼의 세로 크기 */
+  margin-top: -25px;
+  /* 버튼의 세로 크기의 절반 값으로 마진을 설정하여 중앙에 위치 */
   z-index: 10;
 }
 
 .swiper-button-prev {
-  left: 10px; /* 스와이퍼 컨테이너의 왼쪽에서 10px 떨어진 위치에 버튼을 배치 */
+  left: 10px;
+  /* 스와이퍼 컨테이너의 왼쪽에서 10px 떨어진 위치에 버튼을 배치 */
 }
 
 .swiper-button-next {
-  right: 10px; /* 스와이퍼 컨테이너의 오른쪽에서 10px 떨어진 위치에 버튼을 배치 */
+  right: 10px;
+  /* 스와이퍼 컨테이너의 오른쪽에서 10px 떨어진 위치에 버튼을 배치 */
 }
 
 div.up_border,
@@ -490,20 +466,25 @@ section.up_border {
   border-top: 1px solid #ccc;
   padding-bottom: 30px;
 }
+
 div.image_desc {
   padding: 15px 24px;
   font-size: 12px;
   color: #808080;
 }
+
 div.image_desc span.nodesc {
   background: #fff;
 }
+
 div.image_desc span.image_page {
   float: right;
 }
+
 div.image_desc img {
   vertical-align: middle;
 }
+
 .swiper-slide img {
   display: block;
   width: 70%;
@@ -514,7 +495,7 @@ div.image_desc img {
 
 .titleName {
   font-size: 30px;
-  font-weight:bolder
+  font-weight: bolder
 }
 
 main {
@@ -561,15 +542,19 @@ td {
 .type_detail tr:nth-child(even) {
   background-color: #ffffff;
 }
+
 .amnt_list {
   display: flex;
   flex-wrap: wrap;
 }
 
 .amnt_list dd {
-  width: 33%; /* 각 항목이 전체 너비의 1/3을 차지하도록 설정 */
-  box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 설정 */
-  padding: 10px; /* 원하는 패딩 설정 */
+  width: 33%;
+  /* 각 항목이 전체 너비의 1/3을 차지하도록 설정 */
+  box-sizing: border-box;
+  /* 패딩과 보더가 너비에 포함되도록 설정 */
+  padding: 10px;
+  /* 원하는 패딩 설정 */
   /* 추가적인 스타일링 필요 */
 }
 
@@ -581,93 +566,138 @@ td {
 .swiper-container {
   overflow: hidden;
 }
+
 /* 더보기 버튼을 눌렀을 때 보여줄 항목들을 위한 CSS */
 .show_more .amnt_list dd:nth-child(n + 4) {
   display: block;
 }
+
 #showMore {
-  border: none; /* 테두리 제거 */
-  color: skyblue; /* 글자 색상 하늘색으로 변경 */
-  background-color: transparent; /* 배경색 투명으로 설정 */
-  cursor: pointer; /* 마우스 오버 시 커서 변경 */
-  padding: 10px 20px; /* 패딩 조정 */
-  font-size: 16px; /* 글자 크기 조정 */
-  display: block; /* 블록 요소로 설정하여 가운데 정렬 가능하게 함 */
-  margin: 20px auto; /* 상하 마진 20px, 좌우 마진 자동으로 설정하여 가운데 정렬 */
+  border: none;
+  /* 테두리 제거 */
+  color: skyblue;
+  /* 글자 색상 하늘색으로 변경 */
+  background-color: transparent;
+  /* 배경색 투명으로 설정 */
+  cursor: pointer;
+  /* 마우스 오버 시 커서 변경 */
+  padding: 10px 20px;
+  /* 패딩 조정 */
+  font-size: 16px;
+  /* 글자 크기 조정 */
+  display: block;
+  /* 블록 요소로 설정하여 가운데 정렬 가능하게 함 */
+  margin: 20px auto;
+  /* 상하 마진 20px, 좌우 마진 자동으로 설정하여 가운데 정렬 */
 }
+
 #amenities {
   margin-top: 10px;
 }
+
 .sul {
   margin-top: 10px;
 }
+
 #rules {
   margin-top: 10px;
   padding-top: 10px;
 }
+
 #conditions {
   padding-top: 10px;
 }
+
 .section2 {
-  border-top: 1px solid #e6e6e6; /* 상단에 테두리 추가 */
-  padding: 30px 0; /* 패딩 추가 */
+  border-top: 1px solid #e6e6e6;
+  /* 상단에 테두리 추가 */
+  padding: 30px 0;
+  /* 패딩 추가 */
   margin-bottom: 40px;
 }
 
 .section2 h2,
 .section2 h3 {
   color: #6200cd;
-  margin-bottom: 20px; /* 제목 아래 마진 추가 */
+  margin-bottom: 20px;
+  /* 제목 아래 마진 추가 */
 }
 
 .section2 ul {
-  list-style: none; /* 기본 리스트 스타일 제거 */
-  margin: 0; /* 기본 마진 제거 */
-  padding: 0; /* 기본 패딩 제거 */
+  list-style: none;
+  /* 기본 리스트 스타일 제거 */
+  margin: 0;
+  /* 기본 마진 제거 */
+  padding: 0;
+  /* 기본 패딩 제거 */
 }
 
 .section2 li {
-  display: flex; /* 항목들을 플렉스 박스로 표시 */
-  justify-content: space-between; /* 양쪽으로 내용을 분산 */
-  align-items: center; /* 세로 중앙 정렬 */
-  padding: 10px 0; /* 상하 패딩 추가 */
-  border-bottom: 1px solid #e6e6e6; /* 항목들 아래 테두리 추가 */
+  display: flex;
+  /* 항목들을 플렉스 박스로 표시 */
+  justify-content: space-between;
+  /* 양쪽으로 내용을 분산 */
+  align-items: center;
+  /* 세로 중앙 정렬 */
+  padding: 10px 0;
+  /* 상하 패딩 추가 */
+  border-bottom: 1px solid #e6e6e6;
+  /* 항목들 아래 테두리 추가 */
 }
 
 .section2 .desc {
-  font-size: 16px; /* 설명의 글자 크기 설정 */
-  color: #666; /* 설명의 글자 색상 설정 */
+  font-size: 16px;
+  /* 설명의 글자 크기 설정 */
+  color: #666;
+  /* 설명의 글자 색상 설정 */
   padding-bottom: 15px
 }
 
 .section2 .price,
 .section2 .unit {
-  font-size: 16px; /* 가격과 단위의 글자 크기 설정 */
-  color: #333; /* 가격과 단위의 글자 색상 설정 */
+  font-size: 16px;
+  /* 가격과 단위의 글자 크기 설정 */
+  color: #333;
+  /* 가격과 단위의 글자 색상 설정 */
 }
 
 .section2 .right {
-  text-align: right; /* 오른쪽 정렬 */
+  text-align: right;
+  /* 오른쪽 정렬 */
 }
 
 .section2 .policy {
-  color: #ff6b6b; /* 정책 글자 색상 설정 */
+  color: #ff6b6b;
+  /* 정책 글자 색상 설정 */
 }
+
 .swiper-container {
-  width: 100%; /* 컨테이너의 가로 크기를 부모 요소에 맞춤 */
-  max-width: 1200px; /* 최대 가로 크기를 1200px로 설정 */
-  margin: auto; /* 상하 마진을 자동으로 설정하여 중앙 정렬 */
+  width: 100%;
+  /* 컨테이너의 가로 크기를 부모 요소에 맞춤 */
+  max-width: 1200px;
+  /* 최대 가로 크기를 1200px로 설정 */
+  margin: auto;
+  /* 상하 마진을 자동으로 설정하여 중앙 정렬 */
 }
 
 .cart_date {
-  display: block; /* 블록 레벨 요소로 표시 */
-  text-align: center; /* 텍스트 가운데 정렬 */ /* 상하 마진 추가 */ /* 패딩 추가 */
-  color: black; /* 글자 색상 설정 */
+  display: block;
+  /* 블록 레벨 요소로 표시 */
+  text-align: center;
+  /* 텍스트 가운데 정렬 */
+  /* 상하 마진 추가 */
+  /* 패딩 추가 */
+  color: black;
+  /* 글자 색상 설정 */
   padding: 5px;
-  font-size: 20px; /* 글자 크기 설정 */
-  cursor: pointer; /* 마우스 오버 시 커서 변경 */
-  border: none; /* 테두리 제거 */
+  font-size: 20px;
+  /* 글자 크기 설정 */
+  cursor: pointer;
+  /* 마우스 오버 시 커서 변경 */
+  border: none;
+  /* 테두리 제거 */
 }
+
 .cart_date_1 {
   float: right;
   border: 1px solid black;
@@ -676,6 +706,7 @@ td {
   margin-right: 0px;
   border-radius: 10px;
 }
+
 .checkDate {
   margin-left: 15px;
 }
@@ -691,8 +722,10 @@ td {
   cursor: pointer;
   border: none;
   border-radius: 15px;
-  float: left; /* 오른쪽으로 붙이기 */
+  float: left;
+  /* 오른쪽으로 붙이기 */
 }
+
 .cart_right1 {
   display: block;
   text-align: center;
@@ -711,15 +744,19 @@ td {
   margin-left: auto;
   display: flex;
 }
+
 .price {
   margin-right: 30px;
 }
+
 .sang {
   padding-top: 10px;
 }
+
 .star {
   color: #6800cd;
 }
+
 h2 {
   color: #6200cd;
   font-weight: bold

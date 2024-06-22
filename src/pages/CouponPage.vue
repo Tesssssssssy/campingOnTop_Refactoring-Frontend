@@ -10,6 +10,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { getTokenFromCookie } from "@/utils/authCookies";
 
 export default {
     setup() {
@@ -17,7 +18,7 @@ export default {
         const router = useRouter();
 
         const requestCoupon = async () => {
-            const token = window.localStorage.getItem("token");
+            const token = getTokenFromCookie('accessToken');
             try {
                 const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING', {}, {
                     headers: {

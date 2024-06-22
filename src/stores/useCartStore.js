@@ -1,7 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useMemberStore } from './useMemberStore.js';
+import { getTokenFromCookie } from "@/utils/authCookies";
 
+// const backend = "http://www.campingontop.kro.kr/api"; 
 const backend = "http://localhost:8080";
 
 export const useCartStore = defineStore("cart", {
@@ -33,12 +35,13 @@ export const useCartStore = defineStore("cart", {
         throw error;
       }
     },
-    async addHouseToCart(token, requestBody) {
+    async addHouseToCart(requestBody) {
       try {
-        const response = await axios.post(backend + "/cart/add", requestBody, {
+        const token = getTokenFromCookie('accessToken');
+        const response = await axios.post(`${backend}/cart/add`, requestBody, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`
           },
         });
         return response;
@@ -69,7 +72,7 @@ export const useCartStore = defineStore("cart", {
         return;
       }
 
-      const token = localStorage.getItem('token');
+      const token = getTokenFromCookie('accessToken');
       const apiKey = process.env.VUE_APP_PORTONE_API_KEY;
 
       if (!apiKey) {

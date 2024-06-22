@@ -114,9 +114,11 @@
 
 <script>
 import { useMemberStore } from "/src/stores/useMemberStore";
+import { getTokenFromCookie, deleteTokenCookies } from "@/utils/authCookies";
 import { ref } from 'vue';
-import axios from 'axios';
+import axios from "axios";
 import { useRouter } from 'vue-router';
+import VueJwtDecode from "vue-jwt-decode";
 
 export default {
   name: "HeaderComponents",
@@ -126,20 +128,15 @@ export default {
     const showModal = ref(false);
 
     const requestCoupon = async () => {
-      const token = window.localStorage.getItem("token");
+      // 쿠키에서 직접 토큰을 가져오지 않고 API 호출시 브라우저가 자동으로 쿠키를 포함시키도록 합니다.
       try {
-        const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING', {}, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        message.value = response.data.message; // 서버에서 전달된 메시지를 사용
-        // 성공 메시지에 따라 홈 페이지로 이동할 수 있도록 로직 추가
+        const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING');
+        message.value = response.data.message;
         if (response.data.message === "쿠폰이 발급되었습니다.") {
           setTimeout(() => {
             showModal.value = false;
             router.push('/');
-          }, 2000); // 2초 후 홈으로 리다이렉트
+          }, 2000);
         }
       } catch (error) {
         message.value = error.response.data.message || "이미 발급받은 쿠폰입니다!";
@@ -176,40 +173,34 @@ export default {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
     logout() {
-      window.localStorage.removeItem("token");
+      deleteTokenCookies();
       const store = useMemberStore();
       store.isAuthenticated = false;
       store.decodedToken = {};
       this.isDropdownOpen = false;
       this.$router.push("/");
     },
-    decodeToken(token) {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-
-      return JSON.parse(jsonPayload);
-    },
   },
   created() {
-    const token = window.localStorage.getItem("token");
-    if (token) {
-      const decoded = this.decodeToken(token);
-      const store = useMemberStore();
-      store.setDecodedToken(decoded);
-      store.isAuthenticated = true;
-      store.checkTokenExpiration();
-
-      setInterval(() => {
-        store.checkTokenExpiration(); // 주기적으로 토큰 만료 확인
-      }, 30000); // 30초마다 토큰 만료 확인
+    const store = useMemberStore();
+    const accessToken = getTokenFromCookie('accessToken');
+    if (accessToken) {
+      try {
+        const decoded = VueJwtDecode.decode(accessToken);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp > currentTime) {
+          store.setDecodedToken(decoded);
+          store.isAuthenticated = true;
+          store.startTokenRefreshInterval(); // 로그인 시 토큰 갱신 인터벌 설정
+        } else {
+          store.refreshAccessToken();
+        }
+      } catch (error) {
+        console.error("Error processing access token:", error);
+        store.logout();
+      }
     }
-  },
+  }
 };
 </script>
 
