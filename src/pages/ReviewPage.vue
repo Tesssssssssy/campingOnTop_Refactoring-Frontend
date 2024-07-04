@@ -1,19 +1,27 @@
 <template>
-  <div class="order-container">
+  <div class="review-container">
     <div class="content-container">
       <div>
-        <h2>누적 결제 내역</h2>
+        <h2>작성한 리뷰 내역</h2>
       </div>
       <hr class="line">
-      <div class="order-details" v-for="order in orders" :key="order.orderId">
-        <p>주문번호: {{ order.orderId }}</p>
-        <p>주문일시: {{ order.orderDate }}</p>
-        <p>상품 이름: {{ order.houseName }}</p>
-        <p>체크인: {{ order.checkIn }}</p>
-        <p>체크아웃: {{ order.checkOut }}</p>
-        <p>총 결제금액: {{ order.price }}원</p>
-        <button class="review-button" @click="openModal(order.orderId)">리뷰 작성하기</button>
-        <br>
+      <div class="review-details" v-for="review in reviewStore.reviewList" :key="review.id">
+        <div class="review-item">
+          <p>주문번호: {{ review.ordersNum }}</p>
+          <p>리뷰 작성일: {{ review.updatedAt }}</p>
+          <p>숙소 이름: {{ review.houseName }}</p>
+          <p>리뷰 내용:</p>
+          <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
+          <p>
+            <span class="star-rating">
+              <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
+              <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
+            </span>
+          </p>
+          <button class="review-button-update" @click="openModal(review)">리뷰 수정하기</button>
+          <button class="review-button-delete" @click="deleteReview(review.reviewId)">리뷰 삭제하기</button>
+          <br>
+        </div>
       </div>
       <div class="additional-actions">
         <router-link to="/">
@@ -25,7 +33,7 @@
     <!-- 모달 -->
     <div v-if="isModalVisible" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
-        <h3>리뷰 작성하기</h3>
+        <h3>리뷰 수정하기</h3>
         <form @submit.prevent="submitReview">
           <div class="form-group">
             <label for="review-content">리뷰 내용:</label>
@@ -44,7 +52,7 @@
               </span>
             </div>
           </div>
-          <input type="hidden" v-model="review.orderedHouseId" />
+          <input type="hidden" v-model="review.id" />
           <button type="submit">제출</button>
           <button type="button" @click="closeModal">취소</button>
         </form>
@@ -54,72 +62,79 @@
 </template>
 
 <script>
-import axios from "axios";
-import { getTokenFromCookie } from "@/utils/authCookies";
-
-// const backend = "http://www.campingontop.kro.kr/api"; 
-const backend = "http://localhost:8080"; 
+import { mapStores } from "pinia";
+import { useReviewStore } from "@/stores/useReviewStore";
 
 export default {
-  name: "OrderCompletePage",
+  name: "ReviewPage",
   data() {
     return {
-      orders: [],
       isModalVisible: false,
       review: {
-        orderedHouseId: '',
+        id: null,
         content: '',
         stars: 1
       }
     }
   },
+  computed: {
+    ...mapStores(useReviewStore),
+  },
+  async mounted() {
+    await this.reviewStore.getReviewListByUser();
+  },
   methods: {
-    async getOrderList() {
-      const token = getTokenFromCookie('accessToken');
-      let response = await axios.get(backend + "/orders/list", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-
-      if (response.data.result && response.data.result.length > 0) {
-        this.orders = response.data.result;
-      } else {
-        console.error("주문 내역이 없습니다.");
-      }
-    },
-    openModal(orderId) {
-      this.review.orderedHouseId = Number(orderId);
+    openModal(review) {
+      this.review = {
+        id: review.reviewId, // reviewId를 설정
+        content: review.reviewContent,
+        stars: review.stars
+      };
       this.isModalVisible = true;
     },
     closeModal() {
       this.isModalVisible = false;
-      this.review.content = '';
-      this.review.stars = 1;
+      this.review = {
+        reviewId: null,
+        content: '',
+        stars: 1
+      };
     },
     setStarRating(stars) {
       this.review.stars = stars;
     },
     async submitReview() {
-      const token = getTokenFromCookie('accessToken');
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      };
       try {
-        await axios.post(backend +"/review/create", this.review, { headers });
-        alert('리뷰가 성공적으로 제출되었습니다.');
+        const updatedReview = {
+          reviewId: this.review.id, // Ensure reviewId is included
+          content: this.review.content,
+          stars: this.review.stars
+        };
+        await this.reviewStore.updateReview(updatedReview);
+        alert('리뷰가 성공적으로 수정되었습니다.');
         this.closeModal();
-        console.log('리뷰가 성공적으로 제출되었습니다.');
+        await this.reviewStore.getReviewListByUser(); // Refresh the review list
       } catch (error) {
-        console.error('Error submitting review:', error);
-        alert('리뷰 제출에 실패했습니다. 다시 시도해 주세요.');
-        // 추후에 리뷰 중복시 제출 실패하게 하는거 도입해야함
+        console.error('Error updating review:', error);
+        alert('리뷰 수정에 실패했습니다. 다시 시도해 주세요.');
+      }
+    },
+    async deleteReview(reviewId) {
+      const userConfirmed = confirm("리뷰를 지우면 해당 결제 건에 대한 리뷰를 더이상 작성하실 수 없습니다. 그래도 지우시겠습니까?");
+
+      if (!userConfirmed) {
+        return;
+      }
+
+      try {
+        await this.reviewStore.deleteReview(reviewId);
+        alert('리뷰가 성공적으로 삭제되었습니다.');
+        await this.reviewStore.getReviewListByUser(); // Refresh the review list
+      } catch (error) {
+        console.error('Error deleting review:', error);
+        alert('리뷰 삭제에 실패했습니다. 다시 시도해 주세요.');
       }
     }
-  },
-  mounted() {
-    this.getOrderList();
   }
 }
 </script>
@@ -136,7 +151,7 @@ body {
   width: 100%;
 }
 
-.order-container {
+.review-container {
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -175,7 +190,7 @@ body {
   border-radius: 20%;
 }
 
-.order-container h2 {
+.review-container h2 {
   color: #333;
 }
 
@@ -203,13 +218,20 @@ a:hover {
   color: #00AB03;
 }
 
-.order-details {
+.review-details {
   text-align: left;
   margin-bottom: 20px;
 }
 
-.order-details p {
+.review-details p {
   margin: 10px 0;
+}
+
+.review-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f9f9f9;
 }
 
 .confirmation-message {
@@ -299,18 +321,17 @@ button[type="button"]:hover {
 }
 
 /* 별점 스타일 */
-.star-rating .stars {
+.star-rating {
   display: flex;
+}
+
+.star {
+  font-size: 24px; /* 별 모양의 크기 조절 */
+  color: #d3d3d3; /* 비어있는 별의 색상 */
   cursor: pointer;
 }
 
-.star-rating .star {
-  font-size: 24px;
-  color: #ccc;
-  margin-right: 5px;
-}
-
-.star-rating .star.filled {
-  color: #f5c518;
+.star.filled {
+  color: #f5b301; /* 채워진 별의 색상 */
 }
 </style>

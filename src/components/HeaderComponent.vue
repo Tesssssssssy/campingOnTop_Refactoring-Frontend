@@ -11,6 +11,9 @@
       </button>
       <ul class="navbar_nav" v-if="isAuthenticated">
         <li class="nav-item active">
+          <a href="/review">리뷰</a>
+        </li>
+        <li class="nav-item active">
           <a href="/likes">좋아요</a>
         </li>
         <li class="nav-item">
@@ -60,6 +63,8 @@
                 <span margin-left="5px">{{ decodedToken.nickname }}</span>
               </a>
               <!-- 직접 나열된 링크 -->
+              <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자"
+                  width="21" />리뷰</a>
               <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
                   width="21" />좋아요</a>
               <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>

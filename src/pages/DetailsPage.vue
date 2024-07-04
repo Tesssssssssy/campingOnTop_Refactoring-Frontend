@@ -136,6 +136,22 @@
         <ConfirmDialogComponent v-if="showLikesConfirmDialog" :isVisible="showLikesConfirmDialog"
           message="좋아요 목록으로 이동하시겠습니까?" :onConfirm="goToLikes" :onCancel="cancelGoToLikes" />
       </section>
+      <section id="description" class="section3 up_border">
+        <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
+        <div class="review-details" v-for="review in reviewList" :key="review.id">
+          <div class="review-item">
+            <p>리뷰 작성일: {{ review.updatedAt }}</p>
+            <p>작성자: {{ review.userNickName }}</p>
+            <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
+            <p> 
+              <span class="star-rating">
+                <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
+                <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
+              </span>
+            </p>
+          </div>
+        </div>
+      </section>
 
       <!--
         <section id="reviews" class="section2 up_border">
@@ -287,6 +303,7 @@ import { useMemberStore } from "/src/stores/useMemberStore";
 import { useHouseStore } from "/src/stores/useHouseStore";
 import { useLikesStore } from "/src/stores/useLikesStore";
 import { useCartStore } from "/src/stores/useCartStore";
+import { useReviewStore } from "@/stores/useReviewStore";
 import ConfirmDialogComponent from "/src/components/ConfirmDialogComponent.vue";
 
 import Swiper from "swiper";
@@ -301,16 +318,19 @@ export default {
       checkOutDate: "",
       showCartConfirmDialog: false,
       showLikesConfirmDialog: false,
+      reviewList: [],
     };
   },
   computed: {
-    ...mapStores(useMemberStore, useHouseStore, useLikesStore, useCartStore),
+    ...mapStores(useMemberStore, useHouseStore, useLikesStore, useCartStore, useReviewStore),
   },
   components: { ConfirmDialogComponent },
   async mounted() {
     const id = this.$route.params.id;
+    await this.reviewStore.getReviewListByHouseId(id);
     await this.houseStore.getHouseDetails(id);
     this.houseDetails = this.houseStore.houseDetails;
+    this.reviewList = this.reviewStore.reviewList;
     this.$nextTick(() => {
       this.initializeSwiper();
     });
@@ -465,6 +485,12 @@ div.up_border,
 section.up_border {
   border-top: 1px solid #ccc;
   padding-bottom: 30px;
+}
+
+.section3.up_border{
+  border-top: 1px solid #cccccc00;
+  padding-bottom: 30px;
+  margin-top: 250px;
 }
 
 div.image_desc {
@@ -760,5 +786,34 @@ td {
 h2 {
   color: #6200cd;
   font-weight: bold
+}
+
+.review-details {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.review-details p {
+  margin: 10px 0;
+}
+
+.review-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+.star-rating {
+  display: flex;
+}
+
+.star {
+  font-size: 24px; /* 별 모양의 크기 조절 */
+  color: #d3d3d3; /* 비어있는 별의 색상 */
+  cursor: pointer;
+}
+
+.star.filled {
+  color: #f5b301; /* 채워진 별의 색상 */
 }
 </style>
