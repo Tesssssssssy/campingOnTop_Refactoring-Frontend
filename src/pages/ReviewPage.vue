@@ -8,7 +8,7 @@
       <div class="review-details" v-for="review in reviewStore.reviewList" :key="review.id">
         <div class="review-item">
           <p>주문번호: {{ review.ordersNum }}</p>
-          <p>리뷰 작성일: {{ review.updatedAt }}</p>
+          <p>최근 수정일: {{ review.updatedAt }}</p>
           <p>숙소 이름: {{ review.houseName }}</p>
           <p>리뷰 내용:</p>
           <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
