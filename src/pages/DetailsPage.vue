@@ -140,7 +140,7 @@
         <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
         <div class="review-details" v-for="review in reviewList" :key="review.id">
           <div class="review-item">
-            <p>리뷰 작성일: {{ review.updatedAt }}</p>
+            <p class="updated-at">{{ review.updatedAt }}</p>
             <p>작성자: {{ review.userNickName }}</p>
             <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
             <p> 
@@ -815,5 +815,10 @@ h2 {
 
 .star.filled {
   color: #f5b301; /* 채워진 별의 색상 */
+}
+.updated-at {
+  font-size: 0.8em; 
+  color: rgba(0, 0, 0, 0.5); 
+  font-style: italic; 
 }
 </style>

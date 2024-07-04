@@ -7,11 +7,12 @@
       <hr class="line">
       <div class="review-details" v-for="review in reviewStore.reviewList" :key="review.id">
         <div class="review-item">
-          <p>주문번호: {{ review.ordersNum }}</p>
-          <p>최근 수정일: {{ review.updatedAt }}</p>
-          <p>숙소 이름: {{ review.houseName }}</p>
-          <p>리뷰 내용:</p>
-          <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
+          <div class="review-top">
+            <p class="order-num">Order {{ review.ordersNum }}</p>
+            <p class="updated-at">{{ review.updatedAt }}</p>
+          </div>
+          <p class="house-name">{{ review.houseName }}</p>
+          <p class="contents">{{ review.reviewContent }}</p>
           <p>
             <span class="star-rating">
               <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
@@ -333,5 +334,35 @@ button[type="button"]:hover {
 
 .star.filled {
   color: #f5b301; /* 채워진 별의 색상 */
+}
+
+.review-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.updated-at {
+  font-size: 0.8em; 
+  color: rgba(0, 0, 0, 0.5); 
+  font-style: italic;
+}
+
+.order-num {
+  font-size: 0.8em; 
+  color: rgba(0, 0, 0, 0.5); 
+  font-style: italic;
+}
+
+.contents {
+  font-size: 1.2em;
+  font-weight: 900;
+  color: black; 
+  padding: 5px;
+}
+
+.house-name {
+  color: black;
 }
 </style>
