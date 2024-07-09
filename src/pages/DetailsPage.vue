@@ -138,18 +138,23 @@
       </section>
       <section id="description" class="section3 up_border">
         <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
-        <div class="review-details" v-for="review in reviewList" :key="review.id">
-          <div class="review-item">
-            <p class="updated-at">{{ review.updatedAt }}</p>
-            <p>작성자: {{ review.userNickName }}</p>
-            <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
-            <p> 
-              <span class="star-rating">
-                <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
-                <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
-              </span>
-            </p>
+        <div v-if="houseDetails.reviewCnt>0">
+          <div class="review-details" v-for="review in reviewList" :key="review.id">
+            <div class="review-item">
+              <p class="updated-at">{{ review.updatedAt }}</p>
+              <p>작성자: {{ review.userNickName }}</p>
+              <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
+              <p> 
+                <span class="star-rating">
+                  <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
+                  <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
+                </span>
+              </p>
+            </div>
           </div>
+        </div>
+        <div v-else class="reviewImage">
+          <img src="@/assets/images/home/NoReview.jpg" alt="No Reviews">
         </div>
       </section>
 
@@ -820,5 +825,18 @@ h2 {
   font-size: 0.8em; 
   color: rgba(0, 0, 0, 0.5); 
   font-style: italic; 
+}
+.reviewImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  width: 100%;
+}
+
+.reviewImage img {
+  width: 60%;
+  height: auto;
+  object-fit: contain;
 }
 </style>

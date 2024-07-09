@@ -5,24 +5,31 @@
         <h2>작성한 리뷰 내역</h2>
       </div>
       <hr class="line">
-      <div class="review-details" v-for="review in reviewStore.reviewList" :key="review.id">
-        <div class="review-item">
-          <div class="review-top">
-            <p class="order-num">Order {{ review.ordersNum }}</p>
-            <p class="updated-at">{{ review.updatedAt }}</p>
+      <div v-if="reviewStore.reviewList.length >0">
+        <div class="review-details" v-for="review in reviewStore.reviewList" :key="review.id">
+          <div class="review-item">
+              <div class="review-top">
+              <p class="order-num">Order {{ review.ordersNum }}</p>
+              <p class="updated-at">{{ review.updatedAt }}</p>
+            </div>
+            <p class="house-name">{{ review.houseName }}</p>
+            <p class="contents">{{ review.reviewContent }}</p>
+            <p>
+              <span class="star-rating">
+                <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
+                <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
+              </span>
+            </p>
+            <button class="review-button-update" @click="openModal(review)">리뷰 수정하기</button>
+            <button class="review-button-delete" @click="deleteReview(review.reviewId)">리뷰 삭제하기</button>
+            <br>
           </div>
-          <p class="house-name">{{ review.houseName }}</p>
-          <p class="contents">{{ review.reviewContent }}</p>
-          <p>
-            <span class="star-rating">
-              <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
-              <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
-            </span>
-          </p>
-          <button class="review-button-update" @click="openModal(review)">리뷰 수정하기</button>
-          <button class="review-button-delete" @click="deleteReview(review.reviewId)">리뷰 삭제하기</button>
-          <br>
         </div>
+      </div>
+      <div v-else class="reviewImage">
+        <a href="/orders/complete">
+          <img src="@/assets/images/home/NoReviewforReviewPage.jpg" alt="No Reviews">
+        </a>
       </div>
       <div class="additional-actions">
         <router-link to="/">
@@ -364,5 +371,19 @@ button[type="button"]:hover {
 
 .house-name {
   color: black;
+}
+
+.reviewImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30vh;
+  width: 100%;
+}
+
+.reviewImage img {
+  width: 60%;
+  height: auto; 
+  object-fit: contain;
 }
 </style>
