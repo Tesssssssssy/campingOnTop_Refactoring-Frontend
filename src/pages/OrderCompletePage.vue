@@ -29,17 +29,14 @@
         <form @submit.prevent="submitReview">
           <div class="form-group">
             <label for="review-content">리뷰 내용:</label>
-            <textarea id="review-content" v-model="review.content" placeholder="리뷰 내용을 입력하세요." rows="4" required></textarea>
+            <textarea id="review-content" v-model="review.content" placeholder="리뷰 내용을 입력하세요." rows="4"
+              required></textarea>
           </div>
           <div class="form-group star-rating">
             <label>별점:</label>
             <div class="stars">
-              <span 
-                v-for="n in 5" 
-                :key="n" 
-                :class="{'star': true, 'filled': review.stars >= n}" 
-                @click="setStarRating(n)"
-              >
+              <span v-for="n in 5" :key="n" :class="{ 'star': true, 'filled': review.stars >= n }"
+                @click="setStarRating(n)">
                 ★
               </span>
             </div>
@@ -58,7 +55,7 @@ import axios from "axios";
 import { getTokenFromCookie } from "@/utils/authCookies";
 
 // const backend = "http://www.campingontop.kro.kr/api"; 
-const backend = "http://localhost:8080"; 
+const backend = "http://localhost:8080";
 
 export default {
   name: "OrderCompletePage",
@@ -107,14 +104,17 @@ export default {
         'Content-Type': 'application/json',
       };
       try {
-        await axios.post(backend +"/review/create", this.review, { headers });
+        await axios.post(backend + "/review/create", this.review, { headers });
         alert('리뷰가 성공적으로 제출되었습니다.');
         this.closeModal();
-        console.log('리뷰가 성공적으로 제출되었습니다.');
       } catch (error) {
-        console.error('Error submitting review:', error);
-        alert('리뷰 제출에 실패했습니다. 다시 시도해 주세요.');
-        // 추후에 리뷰 중복시 제출 실패하게 하는거 도입해야함
+        if (error.response) {
+          const errorMessage = error.response.data.message || "리뷰 제출에 실패했습니다. 다시 시도해 주세요.";
+          alert(errorMessage);
+          this.closeModal();
+        } else {
+          alert('리뷰 제출에 실패했습니다. 서버에서 응답이 없습니다.');
+        }
       }
     }
   },
@@ -146,7 +146,8 @@ body {
 }
 
 .content-container {
-  max-width: 800px;  /* 폭을 넓게 설정 */
+  max-width: 800px;
+  /* 폭을 넓게 설정 */
   width: 100%;
   background: white;
   text-align: center;
@@ -154,7 +155,8 @@ body {
   border: 2px solid #ccc;
   border-radius: 10px;
   overflow-y: auto;
-  max-height: 80vh;  /* 스크롤 가능하도록 최대 높이 설정 */
+  max-height: 80vh;
+  /* 스크롤 가능하도록 최대 높이 설정 */
   margin-top: 170px;
 }
 
@@ -265,7 +267,9 @@ a:hover {
   margin-bottom: 5px;
 }
 
-.form-group textarea, .form-group select, .form-group input {
+.form-group textarea,
+.form-group select,
+.form-group input {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;

@@ -2,7 +2,7 @@
   <div class="review-container">
     <div class="content-container">
       <div>
-        <h2>작성한 리뷰 내역</h2>
+        <h2>나의 리뷰 내역</h2>
       </div>
       <hr class="line">
       <div v-if="reviewStore.reviewList.length >0">
@@ -27,13 +27,11 @@
         </div>
       </div>
       <div v-else class="reviewImage">
-        <a href="/orders/complete">
-          <img src="@/assets/images/home/NoReviewforReviewPage.jpg" alt="No Reviews">
-        </a>
+        <p>작성한 리뷰가 존재하지 않습니다.</p>
       </div>
       <div class="additional-actions">
-        <router-link to="/">
-          홈으로 돌아가기
+        <router-link to="/orders/complete">
+          결제내역으로 이동
         </router-link>
       </div>
     </div>
