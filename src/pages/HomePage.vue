@@ -96,6 +96,17 @@
               />
               <h6>인기 많은 순</h6>
             </li>
+            <li
+              class="swiper-slide"
+              data-type="reviews"
+              @click="searchHouseOrderByREviewCntDesc()"
+            >
+              <img
+                src="@/assets/images/header/chat.png"
+                width="28"
+              />
+              <h6>리뷰 많은 순</h6>
+            </li>
           </ul>
         </div>
       </section>
@@ -143,7 +154,10 @@
                   <a :href="'details/' + house.id">{{ house.name }}</a>
                 </h5>
                 <h6 class="card-subtitle">{{ house.address }}</h6>
-                <h6 class="card-likeCnt">❤ {{ house.likeCnt }}</h6>
+                <div class="card-counters">
+                  <h6 class="card-likeCnt">❤ {{ house.likeCnt }}</h6>
+                  <h6 class="card-reviewCnt"><img src ="@/assets/images/header/chat.png" height="13px" width="13px"> {{ house.reviewCnt }}</h6>
+                </div>
                 <div class="p_price">
                   <span class="price"
                     >{{ house.price.toLocaleString() }}원</span
@@ -285,6 +299,9 @@ export default {
     },
     async searchHouseOrderByLikeCntDesc() {
       await this.houseStore.getHouseListOrderByLikeCntDesc(1, 40);
+    },
+    async searchHouseOrderByREviewCntDesc() {
+      await this.houseStore.getHouseListOrderByReviewCntDesc(1, 40);
     },
     async changePage(page, size) {
       console.log("Changing page to:", page);
@@ -815,7 +832,15 @@ section#main_lists div.card div.card-body h6.card-likeCnt {
   margin: 0 0 5px 0;
   color: red;
 }
-
+section#main_lists div.card div.card-body h6.card-reviewCnt {
+  margin: 0 0 5px 0;
+  color: black;
+}
+section#main_lists div.card div.card-body div.card-counters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 section#main_lists div.card div.p_images span.btn_fav {
   color: #fff;
   padding: 10px;

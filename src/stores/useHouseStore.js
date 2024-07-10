@@ -150,6 +150,19 @@ export const useHouseStore = defineStore("house", {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
       }
     },
+    async getHouseListOrderByReviewCntDesc(page, size) {
+      try {
+        let response = await axios.get(
+          backend + "/house/find/reviewCntDesc?page=" + page + "&size=" + size
+        );
+        this.houseList = response.data;
+
+        console.log(response);
+        return response.data;
+      } catch (error) {
+        console.error("해당 이름의 숙소들이 존재하지 않습니다");
+      }
+    },
     async createHouse(postCreateHouseDtoReq) {
       try {
         const formData = new FormData();
