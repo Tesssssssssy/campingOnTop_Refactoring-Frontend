@@ -96,6 +96,17 @@
               />
               <h6>인기 많은 순</h6>
             </li>
+            <li
+              class="swiper-slide"
+              data-type="reviews"
+              @click="searchHouseOrderByREviewCntDesc()"
+            >
+              <img
+                src="@/assets/images/header/chat.png"
+                width="28"
+              />
+              <h6>리뷰 많은 순</h6>
+            </li>
           </ul>
         </div>
       </section>
@@ -288,6 +299,9 @@ export default {
     },
     async searchHouseOrderByLikeCntDesc() {
       await this.houseStore.getHouseListOrderByLikeCntDesc(1, 40);
+    },
+    async searchHouseOrderByREviewCntDesc() {
+      await this.houseStore.getHouseListOrderByReviewCntDesc(1, 40);
     },
     async changePage(page, size) {
       console.log("Changing page to:", page);
