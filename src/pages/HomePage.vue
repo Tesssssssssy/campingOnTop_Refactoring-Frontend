@@ -813,8 +813,9 @@ section#main_lists div.card div.ribbon {
   z-index: 100;
 }
 section#main_lists div.card div.p_images {
-  aspect-ratio: 14/9;
+  aspect-ratio: 4 / 3; /* 비율을 4:3으로 설정 */
   border-radius: 10px;
+  overflow: hidden; /* 컨테이너 밖으로 넘치는 이미지를 숨깁니다 */
 }
 section#main_lists div.card div.card-body {
   padding: 16px 0;
@@ -894,7 +895,7 @@ main {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* 이미지가 비율을 유지하면서 컨테이너에 맞춰집니다 */
 }
 
 .swiper-pagination-bullet {
