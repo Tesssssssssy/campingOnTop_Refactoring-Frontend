@@ -133,15 +133,18 @@ export default {
     const showModal = ref(false);
 
     const requestCoupon = async () => {
-      // 쿠키에서 직접 토큰을 가져오지 않고 API 호출시 브라우저가 자동으로 쿠키를 포함시키도록 합니다.
+      const token = getTokenFromCookie('accessToken');
       try {
-        const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING');
+        // const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING');
+        const response = await axios.post('http://www.campingontop.kro.kr/api/coupons/request/FREE_CAMPING', {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         message.value = response.data.message;
         if (response.data.message === "쿠폰이 발급되었습니다.") {
-          setTimeout(() => {
-            showModal.value = false;
-            router.push('/');
-          }, 2000);
+          showModal.value = false;
+          router.push('/my/coupon');
         }
       } catch (error) {
         message.value = error.response.data.message || "이미 발급받은 쿠폰입니다!";
