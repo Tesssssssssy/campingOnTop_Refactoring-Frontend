@@ -153,7 +153,8 @@ export default {
     async fetchCoupons() {
       const token = getTokenFromCookie('accessToken');
       try {
-        const response = await axios.get('http://localhost:8080/coupons/my', {
+        // const response = await axios.get('http://localhost:8080/coupons/my', {
+        const response = await axios.get('http://www.campingontop.kro.kr/api/coupons/my', {
           headers: {
             Authorization: `Bearer ${token}`
           }

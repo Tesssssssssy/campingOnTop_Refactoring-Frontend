@@ -20,9 +20,10 @@ export default {
         const requestCoupon = async () => {
             const token = getTokenFromCookie('accessToken');
             try {
-                const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING', {}, {
+                // const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING', {}, {
+                const response = await axios.post('http://www.campingontop.kro.kr/api/coupons/request/FREE_CAMPING', {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
                 message.value = response.data; // 서버에서 전달된 메시지를 사용
