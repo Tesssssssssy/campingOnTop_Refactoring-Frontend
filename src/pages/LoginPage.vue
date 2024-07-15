@@ -90,7 +90,7 @@ export default {
   name: "LoginPage",
   data() {
     return {
-      email: "test01@naver.com",
+      email: "test01@gmail.com",
       password: "qwer1234@",
     };
   },
