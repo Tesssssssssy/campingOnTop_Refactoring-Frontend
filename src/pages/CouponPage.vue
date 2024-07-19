@@ -19,9 +19,10 @@ export default {
 
         const requestCoupon = async () => {
             const token = getTokenFromCookie('accessToken');
+            const backend = process.env.VUE_APP_API_URL;
+            // const backend = process.env.VUE_APP_LOCAL_URL;
             try {
-                // const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING', {}, {
-                const response = await axios.post('http://www.campingontop.kro.kr/api/coupons/request/FREE_CAMPING', {
+                const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

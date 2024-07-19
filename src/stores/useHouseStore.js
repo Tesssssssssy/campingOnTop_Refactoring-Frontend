@@ -2,8 +2,8 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { getTokenFromCookie } from "@/utils/authCookies"; // 쿠키 관리 유틸리티 임포트
 
-// const backend = "http://www.campingontop.kro.kr/api"; 
-const backend = "http://localhost:8080";
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useHouseStore = defineStore("house", {
   state: () => ({

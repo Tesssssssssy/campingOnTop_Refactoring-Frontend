@@ -9,11 +9,11 @@
             d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
         </svg>
       </button>
-      <ul class="navbar_nav" v-if="isAuthenticated">
-        <li class="nav-item active">
+      <ul class="navbar_nav">
+        <li class="nav-item active" v-if="isAuthenticated">
           <a href="/review">리뷰</a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item active" v-if="isAuthenticated">
           <a href="/likes">좋아요</a>
         </li>
         <li class="nav-item">
@@ -134,9 +134,10 @@ export default {
 
     const requestCoupon = async () => {
       const token = getTokenFromCookie('accessToken');
+      const backend = process.env.VUE_APP_API_URL;
+      // const backend = process.env.VUE_APP_LOCAL_URL;
       try {
-        // const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING');
-        const response = await axios.post('http://www.campingontop.kro.kr/api/coupons/request/FREE_CAMPING', {}, {
+        const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }

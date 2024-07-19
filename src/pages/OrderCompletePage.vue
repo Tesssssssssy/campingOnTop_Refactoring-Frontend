@@ -54,8 +54,8 @@
 import axios from "axios";
 import { getTokenFromCookie } from "@/utils/authCookies";
 
-// const backend = "http://www.campingontop.kro.kr/api"; 
-const backend = "http://localhost:8080";
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export default {
   name: "OrderCompletePage",
