@@ -207,20 +207,17 @@ td {
 .cart__list td:nth-child(6) {
   width: 150px;
 }
-
 .cart__list img {
   max-width: 100px;
   height: auto;
   display: block;
   margin: 0 auto;
 }
-
 .cart__list__optionbtn {
   display: block;
   text-align: left;
   margin-left: 75px;
 }
-
 .cart__list__optionbtn {
   background-color: white;
   font-size: 10px;
@@ -248,7 +245,6 @@ td {
   background-color: white;
   border: 1px lightgray solid;
 }
-
 .cart__bigorderbtn.right {
   background-color: blue;
   color: white;

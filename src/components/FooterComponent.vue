@@ -28,55 +28,10 @@
             </div>
           </div>
         </div>
-        <div class="col">
-          <dl>
-            <dt>커뮤니티</dt>
-            <div class="sns_link">
-              <span>
-                <a href="http://facebook.com" target="_blank" title="Facebook" onclick="window.dataLayer.push({event: 'sns_click',channel: 'facebook'});">
-                  <img src="@/assets/images/footer/ic_facebook.gif" alt="Facebook" width="24" />
-                </a>
-              </span>
-              <span>
-                <a href="https://www.instagram.com" target="_blank" title="Instagram" onclick="window.dataLayer.push({event: 'sns_click',channel: 'instagram'});">
-                  <img src="@/assets/images/footer/ic_instagram.gif" alt="Instagram" width="24" />
-                </a>
-              </span>
-              <span>
-                <a href="https://www.youtube.com" target="_blank" title="Youtube" onclick="window.dataLayer.push({event: 'sns_click',channel: 'youtube'});">
-                  <img src="@/assets/images/footer/ic_youtube.gif" alt="YouTube" width="24" />
-                </a>
-              </span>
-              <span>
-                <a href="https://twitter.com" target="_blank" title="Twitter" onclick="window.dataLayer.push({event: 'sns_click',channel: 'twitter'});">
-                  <img src="@/assets/images/footer/ic_twitter.gif" alt="Twitter" width="24" />
-                </a>
-              </span>
-              <span>
-                <a href="https://blog.naver.com" target="_blank" title="Blog" onclick="window.dataLayer.push({event: 'sns_click',channel: 'naverblog'});">
-                  <img src="@/assets/images/footer/ic_blog.gif" alt="Blog" width="24" />
-                </a>
-              </span>
-            </div>
-
-            <div class="app_link">
-              <a href="https://apps.apple.com" target="_blank" onclick="window.dataLayer.push({event: 'app_link',channel: 'Apple app store'});">
-                <img src="@/assets/images/footer/btn_appstore.png" alt="App Store" />
-              </a>
-              <a href="https://play.google.com/store" target="_blank" onclick="window.dataLayer.push({event: 'app_link',channel: 'Google play store'});">
-                <img src="@/assets/images/footer/btn_playstore.png" alt="Play Store" />
-              </a>
-            </div>
-          </dl>
-        </div>
       </div>
       <div class="row">
         <div class="col">
-          <img src="@/assets/images/footer/ic_visa.png" alt="Visa" width="50" />
-          <img src="@/assets/images/footer/ic_master.png" alt="Master" width="50" />
-          <img src="@/assets/images/footer/ic_amex.png" alt="American Express" width="50" />
           <img src="@/assets/images/footer/ic_kakaopay.png" alt="Kakao Pay" width="50" />
-          <img src="@/assets/images/footer/ic_chaipay.png" alt="Chai Pay" width="50" />
         </div>
       </div>
     </div>
