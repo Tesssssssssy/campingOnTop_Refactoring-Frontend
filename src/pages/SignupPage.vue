@@ -242,6 +242,9 @@ export default {
       return re.test(email.toLowerCase());
     },
     async submitRegistration() {
+      const backend = process.env.VUE_APP_API_URL;
+      // const backend = process.env.VUE_APP_LOCAL_URL;
+
       if (!this.isSignUpEnabled) return;
       try {
         const data = {
@@ -251,10 +254,9 @@ export default {
           nickName: this.nickName,
           gender: this.gender,
           phoneNum: this.phoneNum,
-        };
+        }; 
         const response = await axios.post(
-          // "http://www.campingontop.kro.kr/api/user/signUp",
-          "http://localhost:8080/user/signUp",
+          `${backend}/user/signUp`,
           data
         );
         if (response.status === 200 && response.data) {

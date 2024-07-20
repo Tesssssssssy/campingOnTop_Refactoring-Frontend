@@ -137,7 +137,7 @@ export default {
     // 카카오 맵 JavaScript SDK를 로드하는 메서드
     loadKakaoMapScript() {
       // API 키와 추가 라이브러리 매개변수를 포함하여 URL을 구성합니다
-      const kakaoScriptUrl = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_KAKAOMAP_API_KEY}&libraries=services,clusterer,drawing&autoload=false`;
+      const kakaoScriptUrl = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_KAKAOMAP_API_KEY}&libraries=services,clusterer,drawing&autoload=false`;
       // 스크립트를 로드하고 카카오 맵 초기화를 위한 콜백을 전달합니다
       this.loadScript(kakaoScriptUrl, this.initializeKakaoMaps);
     },
@@ -163,7 +163,7 @@ export default {
 
     // 다음 우편번호 서비스 스크립트를 로드하는 메서드
     loadDaumPostcodeScript() {
-      const daumScriptUrl = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+      const daumScriptUrl = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
       this.loadScript(daumScriptUrl, () => {
         console.log("다음 우편번호 스크립트 로드 완료.");
       });

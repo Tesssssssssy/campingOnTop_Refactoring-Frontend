@@ -9,11 +9,11 @@
             d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
         </svg>
       </button>
-      <ul class="navbar_nav" v-if="isAuthenticated">
-        <li class="nav-item active">
+      <ul class="navbar_nav">
+        <li class="nav-item active" v-if="isAuthenticated">
           <a href="/review">리뷰</a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item active" v-if="isAuthenticated">
           <a href="/likes">좋아요</a>
         </li>
         <li class="nav-item">
@@ -133,15 +133,19 @@ export default {
     const showModal = ref(false);
 
     const requestCoupon = async () => {
-      // 쿠키에서 직접 토큰을 가져오지 않고 API 호출시 브라우저가 자동으로 쿠키를 포함시키도록 합니다.
+      const token = getTokenFromCookie('accessToken');
+      const backend = process.env.VUE_APP_API_URL;
+      // const backend = process.env.VUE_APP_LOCAL_URL;
       try {
-        const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING');
+        const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         message.value = response.data.message;
         if (response.data.message === "쿠폰이 발급되었습니다.") {
-          setTimeout(() => {
-            showModal.value = false;
-            router.push('/');
-          }, 2000);
+          showModal.value = false;
+          router.push('/my/coupon');
         }
       } catch (error) {
         message.value = error.response.data.message || "이미 발급받은 쿠폰입니다!";

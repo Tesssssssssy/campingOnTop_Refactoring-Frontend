@@ -19,10 +19,12 @@ export default {
 
         const requestCoupon = async () => {
             const token = getTokenFromCookie('accessToken');
+            const backend = process.env.VUE_APP_API_URL;
+            // const backend = process.env.VUE_APP_LOCAL_URL;
             try {
-                const response = await axios.post('http://localhost:8080/coupons/request/FREE_CAMPING', {}, {
+                const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
                 message.value = response.data; // 서버에서 전달된 메시지를 사용
