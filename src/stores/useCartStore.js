@@ -3,8 +3,8 @@ import axios from "axios";
 import { useMemberStore } from './useMemberStore.js';
 import { getTokenFromCookie } from "@/utils/authCookies";
 
-const backend = process.env.VUE_APP_API_URL;
-// const backend = process.env.VUE_APP_LOCAL_URL;
+// const backend = process.env.VUE_APP_API_URL;
+const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
