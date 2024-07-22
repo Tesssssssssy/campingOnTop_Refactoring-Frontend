@@ -30,8 +30,8 @@
     methods: {
       async fetchCoupons() {
         const token = getTokenFromCookie('accessToken');
-        const backend = process.env.VUE_APP_API_URL;
-        // const backend = process.env.VUE_APP_LOCAL_URL;
+        // const backend = process.env.VUE_APP_API_URL;
+        const backend = process.env.VUE_APP_LOCAL_URL;
         try {
           const response = await axios.get(`${backend}/coupons/my`, {
             headers: {

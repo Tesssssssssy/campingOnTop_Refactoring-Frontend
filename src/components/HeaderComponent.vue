@@ -134,8 +134,8 @@ export default {
 
     const requestCoupon = async () => {
       const token = getTokenFromCookie('accessToken');
-      const backend = process.env.VUE_APP_API_URL;
-      // const backend = process.env.VUE_APP_LOCAL_URL;
+      // const backend = process.env.VUE_APP_API_URL;
+      const backend = process.env.VUE_APP_LOCAL_URL;
       try {
         const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {}, {
           headers: {
