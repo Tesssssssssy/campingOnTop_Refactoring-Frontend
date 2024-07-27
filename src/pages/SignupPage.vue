@@ -242,8 +242,8 @@ export default {
       return re.test(email.toLowerCase());
     },
     async submitRegistration() {
-      const backend = process.env.VUE_APP_API_URL;
-      // const backend = process.env.VUE_APP_LOCAL_URL;
+      // const backend = process.env.VUE_APP_API_URL;
+      const backend = process.env.VUE_APP_LOCAL_URL;
 
       if (!this.isSignUpEnabled) return;
       try {

@@ -20,6 +20,9 @@
           <a href="/map">지도</a>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
+          <a href="/chatRooms">채팅룸</a>
+        </li>
+        <li class="nav-item" v-if="isAuthenticated">
           <a href="/my/coupon">쿠폰내역</a>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
@@ -63,11 +66,11 @@
                 <span margin-left="5px">{{ decodedToken.nickname }}</span>
               </a>
               <!-- 직접 나열된 링크 -->
-              <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자"
-                  width="21" />리뷰</a>
+              <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자" width="21" />리뷰</a>
               <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
                   width="21" />좋아요</a>
               <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
+              <a href="/chatRooms" class="btn"><img src="@/assets/images/header/talk-image.png" alt="사용자" width="21" />채팅룸</a>
               <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
                   width="21" />쿠폰내역</a>
               <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
@@ -134,8 +137,8 @@ export default {
 
     const requestCoupon = async () => {
       const token = getTokenFromCookie('accessToken');
-      const backend = process.env.VUE_APP_API_URL;
-      // const backend = process.env.VUE_APP_LOCAL_URL;
+      // const backend = process.env.VUE_APP_API_URL;
+      const backend = process.env.VUE_APP_LOCAL_URL;
       try {
         const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {}, {
           headers: {
