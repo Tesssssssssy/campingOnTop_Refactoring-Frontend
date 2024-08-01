@@ -113,6 +113,7 @@
 
           <span class="cart_right" @click="likesHouse()"> ❤️ 좋아요 </span>
           <span class="cart_right"> ❤️ {{ houseDetails.likeCnt }} </span>
+          <span class="cart_right" @click="startChat"> 💬 채팅하기 </span>
           <div class="cart_date_1">
             <div class="cart_date">
               <label for="checkInDate" style="padding-left: 18px">체크인 날짜:
@@ -136,15 +137,13 @@
           message="좋아요 목록으로 이동하시겠습니까?" :onConfirm="goToLikes" :onCancel="cancelGoToLikes" />
       </section>
 
-      <!-- 챠탕 -->
-      <button @click="startChat">채팅하기</button>
 
       <section id="description" class="section3 up_border">
         <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
         <div v-if="houseDetails.reviewCnt > 0">
           <div class="review-details" v-for="review in reviewList" :key="review.id">
             <div class="review-item">
-              <p class="updated-at">최근 수정 날짜: {{ formatDate(review.updatedAt) }}</p>
+              <p class="updated-at">{{ formatDate(review.updatedAt) }}</p>
               <p>작성자: {{ review.userNickName }}</p>
               <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
               <p>
