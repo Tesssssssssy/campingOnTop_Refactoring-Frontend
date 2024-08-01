@@ -141,7 +141,7 @@
         <div v-if="houseDetails.reviewCnt>0">
           <div class="review-details" v-for="review in reviewList" :key="review.id">
             <div class="review-item">
-              <p class="updated-at">{{ review.updatedAt }}</p>
+              <p class="updated-at">최근 수정 날짜: {{ formatDate(review.updatedAt) }}</p>
               <p>작성자: {{ review.userNickName }}</p>
               <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
               <p> 
@@ -417,6 +417,14 @@ export default {
     cancelGoToLikes() {
       this.showLikesConfirmDialog = false;
     },
+    formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.getFullYear() + '년 ' + 
+              (date.getMonth() + 1).toString().padStart(2, '0') + '월 ' + 
+              date.getDate().toString().padStart(2, '0') + '일 ' + ' ' +
+              date.getHours().toString().padStart(2, '0') + '시 ' + 
+              date.getMinutes().toString().padStart(2, '0') + '분';
+    }
   },
 };
 </script>
