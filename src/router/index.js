@@ -15,6 +15,8 @@ import MyCouponPage from '../pages/MyCouponPage';
 import OrderCompletePage from "../pages/OrderCompletePage";
 import MapPage from "../pages/MapPage";
 import ReviewPage from "../pages/ReviewPage";
+import ChatPage from "../pages/ChatPage";
+import ChatRoomListPage from "../pages/ChatRoomListPage";
 
 const requireAuth = () => (to, from, next) => {
   const token = getTokenFromCookie('refreshToken');
@@ -51,7 +53,9 @@ const routes = [
   { path: "/orders/complete", component: OrderCompletePage, beforeEnter: requireAuth() },
   { path: "/coupon", component: CouponPage, beforeEnter: requireAuth() },
   { path: "/my/coupon", component: MyCouponPage, beforeEnter: requireAuth() },
-  { path: "/review", component: ReviewPage}
+  { path: "/review", component: ReviewPage},
+  { path: "/chat/:roomId", component: ChatPage, beforeEnter: requireAuth() },
+  { path: "/chatRooms", component: ChatRoomListPage, beforeEnter: requireAuth() },
 ];
 
 const router = createRouter({

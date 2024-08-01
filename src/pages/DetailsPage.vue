@@ -70,7 +70,6 @@
           </table>
         </div>
       </section>
-
       <section id="description" class="section up_border">
         <h2 class="sul" style="font-weight: bold">설명</h2>
         <div class="sns_share">{{ houseDetails.content }}</div>
@@ -136,15 +135,19 @@
         <ConfirmDialogComponent v-if="showLikesConfirmDialog" :isVisible="showLikesConfirmDialog"
           message="좋아요 목록으로 이동하시겠습니까?" :onConfirm="goToLikes" :onCancel="cancelGoToLikes" />
       </section>
+
+      <!-- 챠탕 -->
+      <button @click="startChat">채팅하기</button>
+
       <section id="description" class="section3 up_border">
         <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
-        <div v-if="houseDetails.reviewCnt>0">
+        <div v-if="houseDetails.reviewCnt > 0">
           <div class="review-details" v-for="review in reviewList" :key="review.id">
             <div class="review-item">
               <p class="updated-at">최근 수정 날짜: {{ formatDate(review.updatedAt) }}</p>
               <p>작성자: {{ review.userNickName }}</p>
               <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
-              <p> 
+              <p>
                 <span class="star-rating">
                   <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
                   <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
@@ -310,8 +313,9 @@ import { useLikesStore } from "/src/stores/useLikesStore";
 import { useCartStore } from "/src/stores/useCartStore";
 import { useReviewStore } from "@/stores/useReviewStore";
 import ConfirmDialogComponent from "/src/components/ConfirmDialogComponent.vue";
-
 import Swiper from "swiper";
+import { useChatStore } from "@/stores/useChatStore";
+
 
 export default {
   data() {
@@ -327,7 +331,7 @@ export default {
     };
   },
   computed: {
-    ...mapStores(useMemberStore, useHouseStore, useLikesStore, useCartStore, useReviewStore),
+    ...mapStores(useMemberStore, useHouseStore, useLikesStore, useCartStore, useReviewStore, useChatStore),
   },
   components: { ConfirmDialogComponent },
   async mounted() {
@@ -417,6 +421,21 @@ export default {
     cancelGoToLikes() {
       this.showLikesConfirmDialog = false;
     },
+    // 채팅
+    async startChat() {
+      const buyerId = this.memberStore.decodedToken.id;
+      const buyerNickname = this.memberStore.decodedToken.nickname;
+      const sellerId = this.houseDetails.userId;
+      const sellerNickname = this.houseDetails.userNickname;
+      const houseId = this.houseDetails.id;
+      try {
+        const chatRoomId = await this.chatStore.createOrJoinChatRoom(buyerId, buyerNickname, sellerId, sellerNickname, houseId);
+        this.$router.push(`/chat/${chatRoomId}`);
+      } catch (error) {
+        console.error("Error starting chat:", error);
+        alert("Failed to start chat. Error: " + error.message);
+      }
+    },
     formatDate(dateStr) {
       const date = new Date(dateStr);
       return date.getFullYear() + '년 ' + 
@@ -500,7 +519,7 @@ section.up_border {
   padding-bottom: 30px;
 }
 
-.section3.up_border{
+.section3.up_border {
   border-top: 1px solid #cccccc00;
   padding-bottom: 30px;
   margin-top: 250px;
@@ -816,24 +835,30 @@ h2 {
   padding: 15px;
   background-color: #f9f9f9;
 }
+
 .star-rating {
   display: flex;
 }
 
 .star {
-  font-size: 24px; /* 별 모양의 크기 조절 */
-  color: #d3d3d3; /* 비어있는 별의 색상 */
+  font-size: 24px;
+  /* 별 모양의 크기 조절 */
+  color: #d3d3d3;
+  /* 비어있는 별의 색상 */
   cursor: pointer;
 }
 
 .star.filled {
-  color: #f5b301; /* 채워진 별의 색상 */
+  color: #f5b301;
+  /* 채워진 별의 색상 */
 }
+
 .updated-at {
-  font-size: 0.8em; 
-  color: rgba(0, 0, 0, 0.5); 
-  font-style: italic; 
+  font-size: 0.8em;
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
 }
+
 .reviewImage {
   display: flex;
   justify-content: center;
