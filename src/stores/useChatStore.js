@@ -4,7 +4,8 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { ref } from 'vue';
 
-const backend = process.env.VUE_APP_LOCAL_URL;
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useChatStore = defineStore('chat', {
     state: () => ({
