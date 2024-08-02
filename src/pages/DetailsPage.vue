@@ -58,14 +58,14 @@
                 <div v-if="houseDetails.hasHeater" class="dd">히터 보유</div>
                 <div v-else class="dd">히터 없음</div>
               </td>
-              <td>
+              <!-- <td>
                 <div class="dt">위도</div>
                 <div class="dd">{{ houseDetails.latitude }}</div>
               </td>
               <td>
                 <div class="dt">경도</div>
                 <div class="dd">{{ houseDetails.longitude }}</div>
-              </td>
+              </td> -->
             </tr>
           </table>
         </div>
@@ -113,6 +113,8 @@
 
           <span class="cart_right" @click="likesHouse()"> ❤️ 좋아요 </span>
           <span class="cart_right"> ❤️ {{ houseDetails.likeCnt }} </span>
+          <!-- 채팅 -->
+          <button class="chat_button" @click="startChat">채팅하기</button>
           <div class="cart_date_1">
             <div class="cart_date">
               <label for="checkInDate" style="padding-left: 18px">체크인 날짜:
@@ -135,9 +137,6 @@
         <ConfirmDialogComponent v-if="showLikesConfirmDialog" :isVisible="showLikesConfirmDialog"
           message="좋아요 목록으로 이동하시겠습니까?" :onConfirm="goToLikes" :onCancel="cancelGoToLikes" />
       </section>
-
-      <!-- 챠탕 -->
-      <button @click="startChat">채팅하기</button>
 
       <section id="description" class="section3 up_border">
         <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
@@ -864,5 +863,30 @@ h2 {
   width: 60%;
   height: auto;
   object-fit: contain;
+}
+
+.cart_right, .like_count, .chat_button {
+  display: inline-block;
+  margin: 20px 10px 0 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+.cart_right {
+  background-color: #ec1818;
+}
+
+.like_count {
+  background: transparent;
+  color: black;
+  font-weight: bold;
+}
+
+.chat_button {
+  background-color: #008CBA; /* 채팅 버튼 색상 */
 }
 </style>
