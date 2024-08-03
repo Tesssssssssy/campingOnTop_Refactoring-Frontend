@@ -45,7 +45,7 @@
       <p class="disclaim">
         캠핑온탑은 통신판매중개자이며 통신판매의 당사자가 아닙니다. 따라서 상품·거래정보 및 거래에 대하여 책임을 지지않습니다.
       </p>
-      <p>&copy;2020 - 2024 campingOnTop. All rights reserved</p>
+      <p>&copy;2024 campingOnTop. All rights reserved</p>
     </div>
   </footer>
 </template>
