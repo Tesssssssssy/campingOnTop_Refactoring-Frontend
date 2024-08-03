@@ -1,9 +1,6 @@
 <template>
   <footer>
     <div class="container-fluid">
-      <h6>
-        😅 페이지 하단에 구현된 부분(Footer)은 추후 페이지 연결 및 기능 구현 예정입니다. (현재 작동 x)
-      </h6>
       <br />
       <div class="row">
         <div class="col-sm">
