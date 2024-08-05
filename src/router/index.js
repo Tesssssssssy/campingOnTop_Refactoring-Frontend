@@ -17,6 +17,7 @@ import MapPage from "../pages/MapPage";
 import ReviewPage from "../pages/ReviewPage";
 import ChatPage from "../pages/ChatPage";
 import ChatRoomListPage from "../pages/ChatRoomListPage";
+import VideoChatPage from "../pages/VideoChatPage";
 
 const requireAuth = () => (to, from, next) => {
   const token = getTokenFromCookie('refreshToken');
@@ -56,6 +57,7 @@ const routes = [
   { path: "/review", component: ReviewPage},
   { path: "/chat/:roomId", component: ChatPage, beforeEnter: requireAuth() },
   { path: "/chatRooms", component: ChatRoomListPage, beforeEnter: requireAuth() },
+  { path: "/video-chat/:roomId", component: VideoChatPage, beforeEnter: requireAuth() },
 ];
 
 const router = createRouter({
