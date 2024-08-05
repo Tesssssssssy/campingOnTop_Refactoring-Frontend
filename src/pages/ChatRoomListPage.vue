@@ -6,12 +6,13 @@
                 <div v-for="room in chatRooms" :key="room.id" class="chat-room-item">
                     <router-link :to="`/chat/${room.id}`" class="chat-room-link">
                         <div class="chat-room-name">
-                            숙소명: {{ room.houseName }} 
+                            숙소명: {{ room.houseName }}
                         </div>
                         <div class="chat-room-name">
                             상대방: {{ getChatPartnerNickname(room) }}
                         </div>
                     </router-link>
+                    <button @click="startVideoChat(room)" class="video-chat-button">화상 채팅</button>
                 </div>
             </div>
         </div>
@@ -22,12 +23,16 @@
 import { ref, onMounted } from 'vue';
 import { useChatRoomStore } from "@/stores/useChatRoomStore";
 import { useMemberStore } from "@/stores/useMemberStore";
+import { useVideoChatStore } from "@/stores/useVideoChatStore";
+import { useRouter } from 'vue-router';
 
 export default {
     setup() {
         const chatRoomStore = useChatRoomStore();
         const memberStore = useMemberStore();
+        const videoChatStore = useVideoChatStore();
         const chatRooms = ref([]);
+        const router = useRouter();
 
         onMounted(async () => {
             const userId = memberStore.decodedToken.id;
@@ -39,8 +44,34 @@ export default {
             return room.buyerId === userId ? room.sellerNickname : room.buyerNickname;
         };
 
-        return { chatRooms, getChatPartnerNickname };
-    },
+        const startVideoChat = async (room) => {
+            const partnerId = room.buyerId === memberStore.decodedToken.id ? room.sellerId : room.buyerId;
+            const partnerNickname = getChatPartnerNickname(room);
+
+            try {
+                let videoChatRoomId = await videoChatStore.findExistingVideoChatRoom(
+                    memberStore.decodedToken.id, partnerId, room.houseId
+                );
+
+                if (!videoChatRoomId) {
+                    videoChatRoomId = await videoChatStore.createOrJoinVideoChatRoom(
+                        memberStore.decodedToken.id,
+                        memberStore.decodedToken.nickname,
+                        partnerId,
+                        partnerNickname,
+                        room.houseId
+                    );
+                }
+
+                // 화상 채팅방으로 라우트
+                router.push(`/video-chat/${videoChatRoomId}`);
+            } catch (error) {
+                console.error('Failed to start video chat:', error);
+            }
+        };
+
+        return { chatRooms, getChatPartnerNickname, startVideoChat };
+    }
 };
 </script>
 
@@ -107,5 +138,18 @@ export default {
 .chat-room-name {
     font-size: 1.2em;
     color: #333;
+}
+
+.video-chat-button {
+    background-color: blue;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    width: 100px;
+}
+
+.video-chat-button:hover {
+    background-color: darkblue;
 }
 </style>
