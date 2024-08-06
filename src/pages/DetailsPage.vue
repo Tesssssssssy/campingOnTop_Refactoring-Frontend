@@ -58,14 +58,14 @@
                 <div v-if="houseDetails.hasHeater" class="dd">히터 보유</div>
                 <div v-else class="dd">히터 없음</div>
               </td>
-              <td>
+              <!-- <td>
                 <div class="dt">위도</div>
                 <div class="dd">{{ houseDetails.latitude }}</div>
               </td>
               <td>
                 <div class="dt">경도</div>
                 <div class="dd">{{ houseDetails.longitude }}</div>
-              </td>
+              </td> -->
             </tr>
           </table>
         </div>
@@ -113,6 +113,7 @@
 
           <span class="cart_right" @click="likesHouse()"> ❤️ 좋아요 </span>
           <span class="cart_right"> ❤️ {{ houseDetails.likeCnt }} </span>
+          <!-- 채팅 -->
           <span class="cart_right" @click="startChat"> 💬 채팅하기 </span>
           <div class="cart_date_1">
             <div class="cart_date">
@@ -870,5 +871,30 @@ h2 {
   width: 60%;
   height: auto;
   object-fit: contain;
+}
+
+.cart_right, .like_count, .chat_button {
+  display: inline-block;
+  margin: 20px 10px 0 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+.cart_right {
+  background-color: #ec1818;
+}
+
+.like_count {
+  background: transparent;
+  color: black;
+  font-weight: bold;
+}
+
+.chat_button {
+  background-color: #008CBA; /* 채팅 버튼 색상 */
 }
 </style>
