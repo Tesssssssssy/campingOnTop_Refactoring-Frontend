@@ -114,7 +114,7 @@
           <span class="cart_right" @click="likesHouse()"> ❤️ 좋아요 </span>
           <span class="cart_right"> ❤️ {{ houseDetails.likeCnt }} </span>
           <!-- 채팅 -->
-          <button class="chat_button" @click="startChat">채팅하기</button>
+          <span class="cart_right" @click="startChat"> 💬 채팅하기 </span>
           <div class="cart_date_1">
             <div class="cart_date">
               <label for="checkInDate" style="padding-left: 18px">체크인 날짜:
@@ -138,12 +138,13 @@
           message="좋아요 목록으로 이동하시겠습니까?" :onConfirm="goToLikes" :onCancel="cancelGoToLikes" />
       </section>
 
+
       <section id="description" class="section3 up_border">
         <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
         <div v-if="houseDetails.reviewCnt > 0">
           <div class="review-details" v-for="review in reviewList" :key="review.id">
             <div class="review-item">
-              <p class="updated-at">{{ review.updatedAt }}</p>
+              <p class="updated-at">{{ formatDate(review.updatedAt) }}</p>
               <p>작성자: {{ review.userNickName }}</p>
               <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
               <p>
@@ -420,7 +421,6 @@ export default {
     cancelGoToLikes() {
       this.showLikesConfirmDialog = false;
     },
-
     // 채팅
     async startChat() {
       const buyerId = this.memberStore.decodedToken.id;
@@ -435,6 +435,14 @@ export default {
         console.error("Error starting chat:", error);
         alert("Failed to start chat. Error: " + error.message);
       }
+    },
+    formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.getFullYear() + '년 ' + 
+              (date.getMonth() + 1).toString().padStart(2, '0') + '월 ' + 
+              date.getDate().toString().padStart(2, '0') + '일 ' + ' ' +
+              date.getHours().toString().padStart(2, '0') + '시 ' + 
+              date.getMinutes().toString().padStart(2, '0') + '분';
     }
   },
 };

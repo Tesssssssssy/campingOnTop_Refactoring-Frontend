@@ -9,10 +9,13 @@
         <div class="review-details" v-for="review in reviewStore.reviewList" :key="review.id">
           <div class="review-item">
               <div class="review-top">
-              <p class="order-num">Order {{ review.ordersNum }}</p>
-              <p class="updated-at">{{ review.updatedAt }}</p>
+              <p class="order-num"> 주문 번호: {{ review.ordersNum }}</p>
+              <p class="updated-at">최근 수정 날짜: {{ formatDate(review.updatedAt) }}</p>
             </div>
-            <p class="house-name">{{ review.houseName }}</p>
+            <p class="house-name">
+              숙소 :
+              <a :href="'details/' + review.houseId">{{ review.houseName }}</a>
+            </p>
             <p class="contents">{{ review.reviewContent }}</p>
             <p>
               <span class="star-rating">
@@ -140,6 +143,14 @@ export default {
         console.error('Error deleting review:', error);
         alert('리뷰 삭제에 실패했습니다. 다시 시도해 주세요.');
       }
+    },
+    formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.getFullYear() + '년 ' + 
+              (date.getMonth() + 1).toString().padStart(2, '0') + '월 ' + 
+              date.getDate().toString().padStart(2, '0') + '일 ' + ' ' +
+              date.getHours().toString().padStart(2, '0') + '시 ' + 
+              date.getMinutes().toString().padStart(2, '0') + '분';
     }
   }
 }

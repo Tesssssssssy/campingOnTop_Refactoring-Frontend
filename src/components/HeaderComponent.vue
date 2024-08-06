@@ -109,9 +109,12 @@
           </div>
 
           <div class="modal-body">
-            <p>숙박 10,000원 할인 쿠폰</p>
+            <select v-model="selectedCoupon" class="form-select">
+              <option value="FREE_CAMPING">무료숙박권 10000원</option>
+              <option value="DISCOUNT">할인쿠폰 5000원</option>
+              <option value="GIFT_CARD">기프트카드 20000원</option>
+            </select>
             <button @click="requestCoupon" class="btn btn-primary">발급 받기</button>
-            <p></p>
             <p v-if="message" class="response-message">{{ message }}</p>
           </div>
         </div>
@@ -134,19 +137,21 @@ export default {
     const message = ref('');
     const router = useRouter();
     const showModal = ref(false);
+    const selectedCoupon = ref('FREE_CAMPING');
 
     const requestCoupon = async () => {
       const token = getTokenFromCookie('accessToken');
       // const backend = process.env.VUE_APP_API_URL;
       const backend = process.env.VUE_APP_LOCAL_URL;
       try {
-        const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {}, {
+        const response = await axios.post(`${backend}/coupons/request/${selectedCoupon.value}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         message.value = response.data.message;
-        if (response.data.message === "쿠폰이 발급되었습니다.") {
+        console.log(response.data)
+        if (response.data === "쿠폰이 발급되었습니다.") {
           showModal.value = false;
           router.push('/my/coupon');
         }
@@ -156,6 +161,7 @@ export default {
     };
 
     return {
+      selectedCoupon,
       message,
       showModal,
       requestCoupon
@@ -903,5 +909,13 @@ div#wh_fav_area div.area a:hover {
   section#search {
     margin: 0 auto;
   }
+}
+
+.form-select {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 5px;
+  font-size: 16px;
 }
 </style>
