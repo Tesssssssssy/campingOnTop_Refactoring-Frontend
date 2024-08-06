@@ -150,7 +150,8 @@ export default {
           }
         });
         message.value = response.data.message;
-        if (response.data.message === "쿠폰이 발급되었습니다.") {
+        console.log(response.data)
+        if (response.data === "쿠폰이 발급되었습니다.") {
           showModal.value = false;
           router.push('/my/coupon');
         }

@@ -103,9 +103,11 @@ export const useCartStore = defineStore("cart", {
       }, async (response) => {
         if (response.success) {
           try {
+            
             let validationResponse = await axios.post(`${backend}/orders/validation`, {
               impUid: response.imp_uid,
-              finalAmount: finalAmount
+              finalAmount: finalAmount,
+              couponId: this.selectedCoupon || null
             }, {
               headers: {
                 'Authorization': `Bearer ${token}`,
