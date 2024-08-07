@@ -4,6 +4,7 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { ref } from 'vue';
 
+// const backend = process.env.VUE_APP_API_URL;
 const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useVideoChatStore = defineStore('videoChat', {
@@ -56,29 +57,31 @@ export const useVideoChatStore = defineStore('videoChat', {
                 onConnect: () => {
                     this.stompClient.subscribe(`/topic/video-chat/${videoChatRoomId}`, (message) => {
                         const msg = JSON.parse(message.body);
-                        if (msg.type === 'video-offer' || msg.type === 'video-answer' || msg.type === 'new-ice-candidate') {
-                            this.videoChatListeners.forEach(listener => listener(msg));
-                        } else {
-                            this.messages.value.push(msg);
-                        }
+                        this.videoChatListeners.forEach(listener => listener(msg));
                     });
                 },
-                onStompError: (error) => {
-                    console.error('Stomp Error', error);
-                },
-                onWebSocketClose: () => {
-                    console.error('WebSocket connection closed. Retrying in 5 seconds...');
-                    setTimeout(() => {
-                        this.connectToWebSocket(videoChatRoomId);
-                    }, 5000);
+                onStompError: (frame) => {
+                    console.error('Broker reported error: ' + frame.headers['message']);
+                    console.error('Additional details: ' + frame.body);
                 },
                 reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000
             });
+
             this.stompClient.activate();
         },
         disconnectWebSocket() {
-            if (this.stompClient) {
+            if (this.stompClient && this.stompClient.connected) {
                 this.stompClient.deactivate();
+            }
+        },
+        sendVideoSignal(type, payload, videoChatRoomId) {
+            if (this.stompClient && this.stompClient.connected) {
+                this.stompClient.publish({
+                    destination: `/app/video-chat-room/send/${videoChatRoomId}`,
+                    body: JSON.stringify({ type, payload })
+                });
             }
         },
         addVideoChatListener(listener) {
@@ -86,19 +89,6 @@ export const useVideoChatStore = defineStore('videoChat', {
         },
         removeVideoChatListener(listener) {
             this.videoChatListeners = this.videoChatListeners.filter(l => l !== listener);
-        },
-        sendVideoSignal(type, payload, videoChatRoomId) {
-            if (this.stompClient && this.stompClient.connected) {
-                const message = {
-                    type,
-                    payload,
-                    videoChatRoomId
-                };
-                this.stompClient.publish({
-                    destination: `/app/video-chat-room/send/${videoChatRoomId}`,
-                    body: JSON.stringify(message),
-                });
-            }
         }
     }
 });

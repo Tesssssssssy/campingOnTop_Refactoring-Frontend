@@ -33,9 +33,8 @@ export default {
         const remoteNickname = ref('');
         let localStream = null;
         let peerConnection = null;
-        let isMakingOffer = false;
-        let iceCandidateQueue = [];
-        let isSettingRemoteDescription = false;
+        let isOfferer = false;
+        let iceCandidatesQueue = [];
 
         const configuration = {
             iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
@@ -51,36 +50,28 @@ export default {
             };
 
             peerConnection.ontrack = (event) => {
-                if (remoteVideo.value.srcObject !== event.streams[0]) {
+                if (event.streams && event.streams[0]) {
                     remoteVideo.value.srcObject = event.streams[0];
-                    console.log('Remote stream added:', event.streams[0]);
                 }
             };
 
             peerConnection.onnegotiationneeded = async () => {
-                if (isMakingOffer) return;
-                isMakingOffer = true;
-                try {
-                    const offer = await peerConnection.createOffer();
-                    if (peerConnection.signalingState !== 'stable') return;
-                    await peerConnection.setLocalDescription(offer);
-                    videoChatStore.sendVideoSignal('video-offer', peerConnection.localDescription, videoChatStore.videoChatRoomId);
-                } catch (error) {
-                    console.error('Error during negotiation:', error);
-                } finally {
-                    isMakingOffer = false;
+                if (isOfferer) {
+                    try {
+                        await waitForStableState();
+                        const offer = await peerConnection.createOffer();
+                        await peerConnection.setLocalDescription(offer);
+                        videoChatStore.sendVideoSignal('video-offer', peerConnection.localDescription, videoChatStore.videoChatRoomId);
+                    } catch (err) {
+                        console.error('Error creating offer:', err);
+                    }
                 }
             };
 
             peerConnection.oniceconnectionstatechange = () => {
-                console.log('ICE connection state change:', peerConnection.iceConnectionState);
                 if (peerConnection.iceConnectionState === 'failed') {
                     peerConnection.restartIce();
                 }
-            };
-
-            peerConnection.onsignalingstatechange = () => {
-                console.log('Signaling state change:', peerConnection.signalingState);
             };
 
             localStream.getTracks().forEach(track => {
@@ -92,6 +83,7 @@ export default {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 localVideo.value.srcObject = localStream;
+                isOfferer = true;
                 createPeerConnection();
             } catch (error) {
                 console.error('Error starting call:', error);
@@ -99,69 +91,63 @@ export default {
         };
 
         const handleVideoOfferMsg = async (msg) => {
+            if (peerConnection) peerConnection.close();
+            createPeerConnection();
+
             const offer = new RTCSessionDescription(msg.payload);
             try {
-                if (peerConnection.signalingState !== 'stable') {
-                    await Promise.all([
-                        peerConnection.setLocalDescription({ type: 'rollback' }),
-                        peerConnection.setRemoteDescription(offer)
-                    ]);
-                } else {
-                    await peerConnection.setRemoteDescription(offer);
-                }
+                await waitForStableState();
+                await peerConnection.setRemoteDescription(offer);
                 const answer = await peerConnection.createAnswer();
                 await peerConnection.setLocalDescription(answer);
                 videoChatStore.sendVideoSignal('video-answer', peerConnection.localDescription, videoChatStore.videoChatRoomId);
-                await addIceCandidatesFromQueue();
+                processQueuedIceCandidates();
             } catch (error) {
                 console.error('Error handling video offer:', error);
             }
         };
 
         const handleVideoAnswerMsg = async (msg) => {
-            if (isSettingRemoteDescription) {
-                console.log("Remote description is already being set, skipping");
-                return;
-            }
-
-            isSettingRemoteDescription = true;
             const answer = new RTCSessionDescription(msg.payload);
             try {
-                if (peerConnection.signalingState === 'have-local-offer') {
-                    await peerConnection.setRemoteDescription(answer);
-                    await addIceCandidatesFromQueue();
-                } else {
-                    console.log("Signaling state is not 'have-local-offer', skipping setting remote description");
-                }
+                await waitForStableState();
+                await peerConnection.setRemoteDescription(answer);
+                processQueuedIceCandidates();
             } catch (error) {
                 console.error('Error handling video answer:', error);
-            } finally {
-                isSettingRemoteDescription = false;
             }
         };
 
         const handleNewICECandidateMsg = async (msg) => {
             const candidate = new RTCIceCandidate(msg.payload);
             try {
-                if (peerConnection.remoteDescription) {
-                    await peerConnection.addIceCandidate(candidate);
-                } else {
-                    iceCandidateQueue.push(candidate);
+                if (peerConnection.remoteDescription === null) {
+                    console.warn('Remote description is not set, queuing ICE candidate');
+                    iceCandidatesQueue.push(candidate);
+                    return;
                 }
+                await peerConnection.addIceCandidate(candidate);
             } catch (error) {
                 console.error('Error handling new ICE candidate:', error);
             }
         };
 
-        const addIceCandidatesFromQueue = async () => {
-            while (iceCandidateQueue.length > 0) {
-                const candidate = iceCandidateQueue.shift();
-                try {
-                    await peerConnection.addIceCandidate(candidate);
-                } catch (error) {
-                    console.error('Error adding ICE candidate from queue:', error);
-                }
+        const processQueuedIceCandidates = async () => {
+            while (iceCandidatesQueue.length > 0) {
+                const candidate = iceCandidatesQueue.shift();
+                await peerConnection.addIceCandidate(candidate);
             }
+        };
+
+        const waitForStableState = async () => {
+            return new Promise(resolve => {
+                const checkState = setInterval(() => {
+                    if (peerConnection.signalingState === 'stable') {
+                        clearInterval(checkState);
+                        resolve();
+                    }
+                }, 100);
+            });
         };
 
         const endCall = () => {
@@ -183,16 +169,16 @@ export default {
             localNickname.value = memberStore.decodedToken.nickname;
             remoteNickname.value = userId === videoChatRoom.buyerId ? videoChatRoom.sellerNickname : videoChatRoom.buyerNickname;
 
-            videoChatStore.addVideoChatListener((msg) => {
+            videoChatStore.addVideoChatListener(async (msg) => {
                 switch (msg.type) {
                     case 'video-offer':
-                        handleVideoOfferMsg(msg);
+                        await handleVideoOfferMsg(msg);
                         break;
                     case 'video-answer':
-                        handleVideoAnswerMsg(msg);
+                        await handleVideoAnswerMsg(msg);
                         break;
                     case 'new-ice-candidate':
-                        handleNewICECandidateMsg(msg);
+                        await handleNewICECandidateMsg(msg);
                         break;
                 }
             });
@@ -200,6 +186,7 @@ export default {
             await videoChatStore.connectToWebSocket(videoChatStore.videoChatRoomId);
 
             if (videoChatRoom) {
+                isOfferer = userId === videoChatRoom.buyerId;
                 startCall();
             }
         });
@@ -215,6 +202,7 @@ export default {
     }
 };
 </script>
+
 
 
 
