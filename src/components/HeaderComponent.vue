@@ -54,6 +54,7 @@
             <img src="@/assets/images/header/user-solid.svg" alt="로그인" width="21" />
             로그인
           </a>
+          <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
         </li>
 
         <!-- 로그인 되었을 때의 사용자 닉네임 및 직접 나열된 링크 -->
@@ -61,22 +62,27 @@
           <div class="header_right my-auto">
             <div class="login">
               <!-- 닉네임 표시 -->
-              <a class="btn" id="btn_nickname">
-                <img src="@/assets/images/header/user-solid.svg" alt="사용자" width="21" />
-                <span margin-left="5px">{{ decodedToken.nickname }}</span>
-              </a>
-              <!-- 직접 나열된 링크 -->
-              <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자" width="21" />리뷰</a>
-              <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
-                  width="21" />좋아요</a>
+              <div class="dropdown-container">
+                <div class="btn" id="btn_nickname" @click="toggleDropdown">
+                  <img src="@/assets/images/header/user-solid.svg" alt="사용자" width="21" />
+                  <span style="margin-left: 5px;">{{ decodedToken.nickname }}</span>
+                  <span class="dropdown-arrow" :class="{ open: isDropdownVisible }"></span>
+                </div>
+                <!-- 직접 나열된 링크 -->
+                <div class="dropdown-menu-header" v-show="isDropdownOpen">
+                  <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자" width="21" />리뷰</a>
+                  <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
+                      width="21" />좋아요</a>
+                  <a href="/chatRooms" class="btn"><img src="@/assets/images/header/talk-image.png" alt="사용자" width="21" />채팅룸</a>
+                  <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
+                      width="21" />쿠폰내역</a>
+                  <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
+                      width="21" />장바구니</a>
+                  <a href="/orders/complete" class="btn"><img src="@/assets/images/header/bill.png" alt="사용자"
+                      width="21" />결제내역</a>
+                </div>
+              </div>
               <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
-              <a href="/chatRooms" class="btn"><img src="@/assets/images/header/talk-image.png" alt="사용자" width="21" />채팅룸</a>
-              <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
-                  width="21" />쿠폰내역</a>
-              <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
-                  width="21" />장바구니</a>
-              <a href="/orders/complete" class="btn"><img src="@/assets/images/header/bill.png" alt="사용자"
-                  width="21" />결제내역</a>
               <a href="/login" @click.prevent="logout" class="btn"><img src="@/assets/images/header/user-solid.svg"
                   alt="사용자" width="21" />로그아웃</a>
             </div>
@@ -189,6 +195,12 @@ export default {
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
+      const arrow = document.querySelector('.dropdown-arrow');
+      if (this.isDropdownOpen) {
+        arrow.classList.add('open');
+      } else {
+        arrow.classList.remove('open');
+      }
     },
     logout() {
       deleteTokenCookies();
@@ -636,6 +648,8 @@ body.sticky header div.head_logo {
 
 .login {
   margin-top: 4px;
+  display: flex;
+  align-items: center;
 }
 
 .wehomehost_btn {
@@ -901,6 +915,8 @@ div#wh_fav_area div.area a:hover {
 
   .login {
     display: block;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -917,5 +933,52 @@ div#wh_fav_area div.area a:hover {
   width: 100%;
   padding: 5px;
   font-size: 16px;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu-header {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  border-radius: 10px;
+}
+
+.dropdown-menu-header a {
+  padding: 12px 16px;
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-menu-header a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown-arrow {
+  margin-left: 5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgba(0, 0, 0, 0.665); /* 화살표 색상을 변경하려면 이 값을 수정하세요 */
+  transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+#btn_nickname {
+  display: flex;
+  align-items: center;
 }
 </style>
