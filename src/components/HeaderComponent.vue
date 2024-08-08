@@ -66,7 +66,7 @@
                 <div class="btn" id="btn_nickname" @click="toggleDropdown">
                   <img src="@/assets/images/header/user-solid.svg" alt="사용자" width="21" />
                   <span style="margin-left: 5px;">{{ decodedToken.nickname }}</span>
-                  <span class="dropdown-arrow" :class="{ open: isDropdownVisible }"></span>
+                  <img class="dropdown-arrow" :class="{ open: isDropdownVisible }" src="@/assets/images/home/arrow-down-sign-to-navigate.png" alt="화살표"/>
                 </div>
                 <!-- 직접 나열된 링크 -->
                 <div class="dropdown-menu-header" v-show="isDropdownOpen">
@@ -966,16 +966,12 @@ div#wh_fav_area div.area a:hover {
 
 .dropdown-arrow {
   margin-left: 5px;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid rgba(0, 0, 0, 0.665); /* 화살표 색상을 변경하려면 이 값을 수정하세요 */
   transition: transform 0.3s ease;
+  width: 12px;
 }
 
 .dropdown-arrow.open {
-  transform: rotate(180deg);
+  transform: rotate(-180deg);
 }
 #btn_nickname {
   display: flex;
