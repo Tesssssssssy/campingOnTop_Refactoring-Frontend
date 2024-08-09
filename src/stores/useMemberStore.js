@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import VueJwtDecode from "vue-jwt-decode";
 import { getTokenFromCookie, setTokenCookies, deleteTokenCookies } from "@/utils/authCookies"; // 쿠키 관리 유틸리티 임포트
+import { customJwtDecode } from "@/utils/jwtDecode"; // 위에서 작성한 base64UrlDecode 유틸리티 함수
 
 // const backend = process.env.VUE_APP_API_URL;
 const backend = process.env.VUE_APP_LOCAL_URL;
@@ -21,7 +22,7 @@ export const useMemberStore = defineStore("member", {
         if (response.status === 200 && response.data.token) {
           setTokenCookies(response.data.token, response.data.refreshToken);
 
-          let userClaims = VueJwtDecode.decode(response.data.token);
+          let userClaims = customJwtDecode(response.data.token); // VueJwtDecode 대신 custom 디코딩 함수 사용
           this.setDecodedToken(userClaims);
           this.isAuthenticated = true;
           this.startTokenRefreshInterval();
