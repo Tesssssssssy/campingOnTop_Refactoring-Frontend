@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import VueJwtDecode from "vue-jwt-decode";
 import { getTokenFromCookie, setTokenCookies, deleteTokenCookies } from "@/utils/authCookies"; // 쿠키 관리 유틸리티 임포트
+import { customJwtDecode } from "@/utils/jwtDecode"; // 위에서 작성한 base64UrlDecode 유틸리티 함수
 
 // const backend = process.env.VUE_APP_API_URL;
 const backend = process.env.VUE_APP_LOCAL_URL;
@@ -19,17 +20,33 @@ export const useMemberStore = defineStore("member", {
         let response = await axios.post(`${backend}/user/login`, loginMember);
 
         if (response.status === 200 && response.data.token) {
-          setTokenCookies(response.data.token, response.data.refreshToken); // 로그인 시 받은 토큰을 쿠키에 저장
+          setTokenCookies(response.data.token, response.data.refreshToken);
 
-          let userClaims = VueJwtDecode.decode(response.data.token);
+          let userClaims = customJwtDecode(response.data.token); // VueJwtDecode 대신 custom 디코딩 함수 사용
           this.setDecodedToken(userClaims);
           this.isAuthenticated = true;
-          this.startTokenRefreshInterval(); // 로그인 시 토큰 갱신 인터벌 설정
+          this.startTokenRefreshInterval();
         } else {
           console.error("토큰 발급 실패");
         }
       } catch (error) {
-        console.error("Login failed:", error);
+        if (error.response && error.response.data) {
+          const errorCode = error.response.data.code;
+          if (errorCode === "PASSWORD_FAIL") {
+            alert(error.response.data.message);
+            this.$router.push("/login");
+          } else if (errorCode === "USER_NOT_SIGNIN") {
+            alert(error.response.data.message);
+            this.$router.push("/login");
+          } else {
+            alert("로그인에 실패했습니다.");
+            this.$router.push("/login");
+          }
+        } else {
+          console.error("Login failed:", error);
+          alert("서버와의 통신에 문제가 발생했습니다. 다시 시도해주세요.");
+          this.$router.push("/login");
+        }
       }
     },
 
