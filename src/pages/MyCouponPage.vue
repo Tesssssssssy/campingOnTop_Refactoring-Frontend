@@ -30,8 +30,8 @@
     methods: {
       async fetchCoupons() {
         const token = getTokenFromCookie('accessToken');
-        // const backend = process.env.VUE_APP_API_URL;
-        const backend = process.env.VUE_APP_LOCAL_URL;
+        const backend = process.env.VUE_APP_API_URL;
+        // const backend = process.env.VUE_APP_LOCAL_URL;
         try {
           const response = await axios.get(`${backend}/coupons/my`, {
             headers: {
@@ -40,7 +40,7 @@
           });
           this.coupons = response.data;
         } catch (error) {
-          console.error('Failed to fetch coupons:', error);
+          alert("쿠폰을 불러오는 과정에서 에러가 발생했습니다!")
         }
       },
       formatDate(dateStr) {

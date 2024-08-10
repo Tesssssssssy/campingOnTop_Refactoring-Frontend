@@ -372,14 +372,14 @@ export default {
         const response = await this.likesStore.likesHouse(userId, houseId);
 
         if (response.status === 200 && response.data) {
-          console.log("House liked successfully!");
+          // console.log("House liked successfully!");
           this.showLikesConfirmDialog = true;
         } else {
-          console.error("Failed to like the house.");
+          // console.error("Failed to like the house.");
           alert("좋아요 목록에 추가 실패");
         }
       } catch (error) {
-        console.error("Error while liking the house:", error);
+        alert("좋아요 목록에 숙소를 추가하는 과정에서 에러가 발생했습니다!")
       }
     },
     async addHouseToCart() {
@@ -395,14 +395,14 @@ export default {
         const response = await this.cartStore.addHouseToCart(requestBody);
 
         if (response.status === 200 && response.data) {
-          console.log("House added to cart successfully!");
+          // console.log("House added to cart successfully!");
           this.showCartConfirmDialog = true;
         } else {
-          console.error("Failed to add the house to cart.");
+          // console.error("Failed to add the house to cart.");
           alert("장바구니에 추가 실패!");
         }
       } catch (error) {
-        console.error("Error while adding the house to cart:", error);
+        alert("장바구니에 숙소를 추가하는 과정에서 에러가 발생했습니다!");
       }
     },
     goToCart() {
@@ -432,7 +432,6 @@ export default {
         const chatRoomId = await this.chatStore.createOrJoinChatRoom(buyerId, buyerNickname, sellerId, sellerNickname, houseId);
         this.$router.push(`/chat/${chatRoomId}`);
       } catch (error) {
-        console.error("Error starting chat:", error);
         alert("Failed to start chat. Error: " + error.message);
       }
     },

@@ -34,7 +34,7 @@ const requireAuth = () => (to, from, next) => {
         next(); // 유효한 토큰, 페이지 접근 허용
       }
     } catch (error) {
-      console.error("Token decoding failed:", error);
+      // console.error("Token decoding failed:", error);
       next("/login"); // 디코딩 실패 시 로그인 페이지로 리다이렉트
     }
   }

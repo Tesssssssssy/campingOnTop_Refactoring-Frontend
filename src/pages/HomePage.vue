@@ -254,7 +254,7 @@ export default {
   watch: {
     "houseStore.totalPages": {
       handler(newVal) {
-        console.log("Total pages updated:", newVal);
+        // console.log("Total pages updated:", newVal);
         this.totalPages = newVal;
       },
       immediate: true,
@@ -304,14 +304,14 @@ export default {
       await this.houseStore.getHouseListOrderByReviewCntDesc(1, 40);
     },
     async changePage(page, size) {
-      console.log("Changing page to:", page);
+      // console.log("Changing page to:", page);
       await this.houseStore.getHouseList(page, size);
-      console.log("New house list:", this.houseStore.houseList);
-      console.log("Current page after change:", this.houseStore.currentPage);
-      console.log(
-        "Is previous button disabled?",
-        this.houseStore.currentPage === 1
-      );
+      // console.log("New house list:", this.houseStore.houseList);
+      // console.log("Current page after change:", this.houseStore.currentPage);
+      // console.log(
+        // "Is previous button disabled?",
+        // this.houseStore.currentPage === 1
+      // );
     },
   },
 };

@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-// const backend = process.env.VUE_APP_API_URL;
-const backend = process.env.VUE_APP_LOCAL_URL;
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useLikesStore = defineStore("likes", {
   state: () => ({ 
@@ -13,7 +13,7 @@ export const useLikesStore = defineStore("likes", {
     async getLikesList(userId) {
       try {
         const response = await axios.get(backend + "/likes/user/" + userId);
-        console.log(response);
+        // console.log(response);
 
         // Ensure likesList is initialized as an array
         this.likesList = response.data.likesList
