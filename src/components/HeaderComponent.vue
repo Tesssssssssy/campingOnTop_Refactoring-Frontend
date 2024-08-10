@@ -69,15 +69,18 @@
                 <div class="btn" id="btn_nickname" @click="toggleDropdown">
                   <img src="@/assets/images/header/user-solid.svg" alt="사용자" width="21" />
                   <span style="margin-left: 5px;">{{ decodedToken.nickname }}</span>
-                  <img class="dropdown-arrow" :class="{ open: isDropdownVisible }" src="@/assets/images/home/arrow-down-sign-to-navigate.png" alt="화살표"/>
+                  <img class="dropdown-arrow" :class="{ open: isDropdownOpen }"
+                    src="@/assets/images/home/arrow-down-sign-to-navigate.png" alt="화살표" />
                 </div>
                 <!-- 직접 나열된 링크 -->
                 <div class="dropdown-menu-header" v-show="isDropdownOpen">
-                  <a href="/coupon" class="btn"><img src="@/assets/images/header/party.png" alt="사용자" width="21" />쿠폰 이벤트</a>
+                  <a href="/coupon" class="btn"><img src="@/assets/images/header/party.png" alt="사용자" width="21" />쿠폰
+                    이벤트</a>
                   <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자" width="21" />리뷰</a>
                   <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
                       width="21" />좋아요</a>
-                  <a href="/chatRooms" class="btn"><img src="@/assets/images/header/talk-image.png" alt="사용자" width="21" />채팅룸</a>
+                  <a href="/chatRooms" class="btn"><img src="@/assets/images/header/talk-image.png" alt="사용자"
+                      width="21" />채팅룸</a>
                   <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
                       width="21" />쿠폰내역</a>
                   <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
@@ -139,7 +142,7 @@ import { getTokenFromCookie, deleteTokenCookies } from "@/utils/authCookies";
 import { ref } from 'vue';
 import axios from "axios";
 import { useRouter } from 'vue-router';
-import VueJwtDecode from "vue-jwt-decode";
+import { customJwtDecode } from "@/utils/jwtDecode"; 
 
 export default {
   name: "HeaderComponents",
@@ -151,8 +154,8 @@ export default {
 
     const requestCoupon = async () => {
       const token = getTokenFromCookie('accessToken');
-      // const backend = process.env.VUE_APP_API_URL;
-      const backend = process.env.VUE_APP_LOCAL_URL;
+      const backend = process.env.VUE_APP_API_URL;
+      // const backend = process.env.VUE_APP_LOCAL_URL;
       try {
         const response = await axios.post(`${backend}/coupons/request/${selectedCoupon.value}`, {}, {
           headers: {
@@ -160,7 +163,7 @@ export default {
           }
         });
         message.value = response.data.message;
-        console.log(response.data)
+        // console.log(response.data)
         if (response.data === "쿠폰이 발급되었습니다.") {
           showModal.value = false;
           router.push('/my/coupon');
@@ -220,7 +223,7 @@ export default {
     const accessToken = getTokenFromCookie('accessToken');
     if (accessToken) {
       try {
-        const decoded = VueJwtDecode.decode(accessToken);
+        const decoded = customJwtDecode(accessToken); // VueJwtDecode 대신 custom 디코딩 함수 사용
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp > currentTime) {
           store.setDecodedToken(decoded);
@@ -230,11 +233,12 @@ export default {
           store.refreshAccessToken();
         }
       } catch (error) {
-        console.error("Error processing access token:", error);
+        // console.error("Error processing access token:", error);
         store.logout();
       }
     }
   }
+
 };
 </script>
 
@@ -977,6 +981,7 @@ div#wh_fav_area div.area a:hover {
 .dropdown-arrow.open {
   transform: rotate(-180deg);
 }
+
 #btn_nickname {
   display: flex;
   align-items: center;
