@@ -5,6 +5,7 @@
             <div class="coupon" v-for="coupon in coupons" :key="coupon.value">
             <strong>쿠폰명:</strong> {{ coupon.name }}
             <p><strong>할인금액:</strong> {{ coupon.amount }}원</p>
+            <p><strong>쿠폰 만료:</strong>  발급일로부터 {{ coupon.expiredTime }}일</p>
             <button @click="requestCoupon(coupon.value)" class="request-btn">쿠폰 받기</button>
             <p v-if="message" class="response-message">{{ message }}</p>
             </div>
@@ -25,9 +26,9 @@ export default {
     data() {
         return {
             coupons: [
-                { name: '무료숙박권', value: 'FREE_CAMPING', amount: 10000 },
-                { name: '할인쿠폰', value: 'DISCOUNT', amount: 5000 },
-                { name: '기프트카드', value: 'GIFT_CARD', amount: 20000 },
+                { name: '무료숙박권', value: 'FREE_CAMPING', amount: 10000, expiredTime: 14 },
+                { name: '할인쿠폰', value: 'DISCOUNT', amount: 5000, expiredTime: 14},
+                { name: '기프트카드', value: 'GIFT_CARD', amount: 20000, expiredTime: 14 },
             ],
         };
     },
@@ -69,10 +70,6 @@ export default {
 
 <style scoped>
 .coupon-list-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   margin-top: 300px;
   margin-left: auto;
   margin-right: auto;
@@ -81,7 +78,6 @@ export default {
   min-width: 300px;
 }
 
-/* 2열로 쿠폰 나열 */
 .coupon-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
