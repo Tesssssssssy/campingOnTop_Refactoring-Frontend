@@ -11,6 +11,9 @@
       </button>
       <ul class="navbar_nav">
         <li class="nav-item active" v-if="isAuthenticated">
+          <a href="/coupon">쿠폰 이벤트</a>
+        </li>
+        <li class="nav-item active" v-if="isAuthenticated">
           <a href="/review">리뷰</a>
         </li>
         <li class="nav-item active" v-if="isAuthenticated">
@@ -50,11 +53,11 @@
       <ul class="top_menu nav justify-content-end">
         <!-- 로그인 되지 않았을 때의 로그인 버튼 -->
         <li class="nav-item" v-if="!isAuthenticated">
+          <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
           <a href="/login" class="btn" id="btn_login">
             <img src="@/assets/images/header/user-solid.svg" alt="로그인" width="21" />
             로그인
           </a>
-          <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
         </li>
 
         <!-- 로그인 되었을 때의 사용자 닉네임 및 직접 나열된 링크 -->
@@ -70,6 +73,7 @@
                 </div>
                 <!-- 직접 나열된 링크 -->
                 <div class="dropdown-menu-header" v-show="isDropdownOpen">
+                  <a href="/coupon" class="btn"><img src="@/assets/images/header/party.png" alt="사용자" width="21" />쿠폰 이벤트</a>
                   <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자" width="21" />리뷰</a>
                   <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
                       width="21" />좋아요</a>
@@ -97,7 +101,7 @@
 
       <div class="head_logo">
         <div class="logo my-auto">
-          <button @click="showModal = true" class="btn btn-primary">할인 쿠폰 발급</button>
+          <!-- <button @click="showModal = true" class="btn btn-primary">할인 쿠폰 발급</button> -->
           <a href="/" class="logo">
             <img src="@/assets/images/home/logo.png" alt="캠핑온탑에 방문하신 것을 환영합니다!" width="500px" />
           </a>
