@@ -11,6 +11,9 @@
       </button>
       <ul class="navbar_nav">
         <li class="nav-item active" v-if="isAuthenticated">
+          <a href="/coupon">쿠폰 이벤트</a>
+        </li>
+        <li class="nav-item active" v-if="isAuthenticated">
           <a href="/review">리뷰</a>
         </li>
         <li class="nav-item active" v-if="isAuthenticated">
@@ -18,6 +21,9 @@
         </li>
         <li class="nav-item">
           <a href="/map">지도</a>
+        </li>
+        <li class="nav-item" v-if="isAuthenticated">
+          <a href="/chatRooms">채팅룸</a>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
           <a href="/my/coupon">쿠폰내역</a>
@@ -47,6 +53,7 @@
       <ul class="top_menu nav justify-content-end">
         <!-- 로그인 되지 않았을 때의 로그인 버튼 -->
         <li class="nav-item" v-if="!isAuthenticated">
+          <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
           <a href="/login" class="btn" id="btn_login">
             <img src="@/assets/images/header/user-solid.svg" alt="로그인" width="21" />
             로그인
@@ -58,22 +65,31 @@
           <div class="header_right my-auto">
             <div class="login">
               <!-- 닉네임 표시 -->
-              <a class="btn" id="btn_nickname">
-                <img src="@/assets/images/header/user-solid.svg" alt="사용자" width="21" />
-                <span margin-left="5px">{{ decodedToken.nickname }}</span>
-              </a>
-              <!-- 직접 나열된 링크 -->
-              <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자"
-                  width="21" />리뷰</a>
-              <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
-                  width="21" />좋아요</a>
+              <div class="dropdown-container">
+                <div class="btn" id="btn_nickname" @click="toggleDropdown">
+                  <img src="@/assets/images/header/user-solid.svg" alt="사용자" width="21" />
+                  <span style="margin-left: 5px;">{{ decodedToken.nickname }}</span>
+                  <img class="dropdown-arrow" :class="{ open: isDropdownOpen }"
+                    src="@/assets/images/home/arrow-down-sign-to-navigate.png" alt="화살표" />
+                </div>
+                <!-- 직접 나열된 링크 -->
+                <div class="dropdown-menu-header" v-show="isDropdownOpen">
+                  <a href="/coupon" class="btn"><img src="@/assets/images/header/party.png" alt="사용자" width="21" />쿠폰
+                    이벤트</a>
+                  <a href="/review" class="btn"><img src="@/assets/images/header/star.png" alt="사용자" width="21" />리뷰</a>
+                  <a href="/likes" class="btn"><img src="@/assets/images/header/heart-solid.svg" alt="사용자"
+                      width="21" />좋아요</a>
+                  <a href="/chatRooms" class="btn"><img src="@/assets/images/header/talk-image.png" alt="사용자"
+                      width="21" />채팅룸</a>
+                  <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
+                      width="21" />쿠폰내역</a>
+                  <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
+                      width="21" />장바구니</a>
+                  <a href="/orders/complete" class="btn"><img src="@/assets/images/header/bill.png" alt="사용자"
+                      width="21" />결제내역</a>
+                </div>
+              </div>
               <a href="/map" class="btn"><img src="@/assets/images/header/placeholder.png" alt="사용자" width="21" />지도</a>
-              <a href="/my/coupon" class="btn"><img src="@/assets/images/header/discount-coupon.png" alt="사용자"
-                  width="21" />쿠폰내역</a>
-              <a href="/cart" class="btn"><img src="@/assets/images/header/shopping-cart.png" alt="사용자"
-                  width="21" />장바구니</a>
-              <a href="/orders/complete" class="btn"><img src="@/assets/images/header/bill.png" alt="사용자"
-                  width="21" />결제내역</a>
               <a href="/login" @click.prevent="logout" class="btn"><img src="@/assets/images/header/user-solid.svg"
                   alt="사용자" width="21" />로그아웃</a>
             </div>
@@ -88,7 +104,7 @@
 
       <div class="head_logo">
         <div class="logo my-auto">
-          <button @click="showModal = true" class="btn btn-primary">할인 쿠폰 발급</button>
+          <!-- <button @click="showModal = true" class="btn btn-primary">할인 쿠폰 발급</button> -->
           <a href="/" class="logo">
             <img src="@/assets/images/home/logo.png" alt="캠핑온탑에 방문하신 것을 환영합니다!" width="500px" />
           </a>
@@ -106,9 +122,12 @@
           </div>
 
           <div class="modal-body">
-            <p>숙박 10,000원 할인 쿠폰</p>
+            <select v-model="selectedCoupon" class="form-select">
+              <option value="FREE_CAMPING">무료숙박권 10000원</option>
+              <option value="DISCOUNT">할인쿠폰 5000원</option>
+              <option value="GIFT_CARD">기프트카드 20000원</option>
+            </select>
             <button @click="requestCoupon" class="btn btn-primary">발급 받기</button>
-            <p></p>
             <p v-if="message" class="response-message">{{ message }}</p>
           </div>
         </div>
@@ -123,7 +142,7 @@ import { getTokenFromCookie, deleteTokenCookies } from "@/utils/authCookies";
 import { ref } from 'vue';
 import axios from "axios";
 import { useRouter } from 'vue-router';
-import VueJwtDecode from "vue-jwt-decode";
+import { customJwtDecode } from "@/utils/jwtDecode"; 
 
 export default {
   name: "HeaderComponents",
@@ -131,19 +150,21 @@ export default {
     const message = ref('');
     const router = useRouter();
     const showModal = ref(false);
+    const selectedCoupon = ref('FREE_CAMPING');
 
     const requestCoupon = async () => {
       const token = getTokenFromCookie('accessToken');
       const backend = process.env.VUE_APP_API_URL;
       // const backend = process.env.VUE_APP_LOCAL_URL;
       try {
-        const response = await axios.post(`${backend}/coupons/request/FREE_CAMPING`, {}, {
+        const response = await axios.post(`${backend}/coupons/request/${selectedCoupon.value}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         message.value = response.data.message;
-        if (response.data.message === "쿠폰이 발급되었습니다.") {
+        // console.log(response.data)
+        if (response.data === "쿠폰이 발급되었습니다.") {
           showModal.value = false;
           router.push('/my/coupon');
         }
@@ -153,6 +174,7 @@ export default {
     };
 
     return {
+      selectedCoupon,
       message,
       showModal,
       requestCoupon
@@ -180,6 +202,12 @@ export default {
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
+      const arrow = document.querySelector('.dropdown-arrow');
+      if (this.isDropdownOpen) {
+        arrow.classList.add('open');
+      } else {
+        arrow.classList.remove('open');
+      }
     },
     logout() {
       deleteTokenCookies();
@@ -195,7 +223,7 @@ export default {
     const accessToken = getTokenFromCookie('accessToken');
     if (accessToken) {
       try {
-        const decoded = VueJwtDecode.decode(accessToken);
+        const decoded = customJwtDecode(accessToken); // VueJwtDecode 대신 custom 디코딩 함수 사용
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp > currentTime) {
           store.setDecodedToken(decoded);
@@ -205,11 +233,12 @@ export default {
           store.refreshAccessToken();
         }
       } catch (error) {
-        console.error("Error processing access token:", error);
+        // console.error("Error processing access token:", error);
         store.logout();
       }
     }
   }
+
 };
 </script>
 
@@ -627,6 +656,8 @@ body.sticky header div.head_logo {
 
 .login {
   margin-top: 4px;
+  display: flex;
+  align-items: center;
 }
 
 .wehomehost_btn {
@@ -892,6 +923,8 @@ div#wh_fav_area div.area a:hover {
 
   .login {
     display: block;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -900,5 +933,57 @@ div#wh_fav_area div.area a:hover {
   section#search {
     margin: 0 auto;
   }
+}
+
+.form-select {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 5px;
+  font-size: 16px;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu-header {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  border-radius: 10px;
+}
+
+.dropdown-menu-header a {
+  padding: 12px 16px;
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-menu-header a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown-arrow {
+  margin-left: 5px;
+  transition: transform 0.3s ease;
+  width: 12px;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(-180deg);
+}
+
+#btn_nickname {
+  display: flex;
+  align-items: center;
 }
 </style>

@@ -40,7 +40,7 @@
           });
           this.coupons = response.data;
         } catch (error) {
-          console.error('Failed to fetch coupons:', error);
+          alert("쿠폰을 불러오는 과정에서 에러가 발생했습니다!")
         }
       },
       formatDate(dateStr) {

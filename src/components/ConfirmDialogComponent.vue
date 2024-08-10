@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     confirm() {
-      console.log("confirm method called");
+      // console.log("confirm method called");
       this.onConfirm();
     },
     cancel() {

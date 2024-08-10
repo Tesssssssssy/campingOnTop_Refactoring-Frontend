@@ -94,7 +94,7 @@
           // 현재 위치를 기반으로 백엔드에서 positions 가져오기
           await this.fetchAndDisplayPositions(this.latitude, this.longitude, this.currentPosition);
         } catch (error) {
-          console.error('Failed to fetch positions:', error);
+          alert("현재 위치를 기반으로 주변 숙소들을 불러오는 과정에서 에러가 발생했습니다.");
           // 백엔드에서 positions를 가져오지 못한 경우, 현재 위치만 표시
           this.displayMarkers([this.currentPosition]);
         }

@@ -58,19 +58,18 @@
                 <div v-if="houseDetails.hasHeater" class="dd">히터 보유</div>
                 <div v-else class="dd">히터 없음</div>
               </td>
-              <td>
+              <!-- <td>
                 <div class="dt">위도</div>
                 <div class="dd">{{ houseDetails.latitude }}</div>
               </td>
               <td>
                 <div class="dt">경도</div>
                 <div class="dd">{{ houseDetails.longitude }}</div>
-              </td>
+              </td> -->
             </tr>
           </table>
         </div>
       </section>
-
       <section id="description" class="section up_border">
         <h2 class="sul" style="font-weight: bold">설명</h2>
         <div class="sns_share">{{ houseDetails.content }}</div>
@@ -114,6 +113,8 @@
 
           <span class="cart_right" @click="likesHouse()"> ❤️ 좋아요 </span>
           <span class="cart_right"> ❤️ {{ houseDetails.likeCnt }} </span>
+          <!-- 채팅 -->
+          <span class="cart_right" @click="startChat"> 💬 채팅하기 </span>
           <div class="cart_date_1">
             <div class="cart_date">
               <label for="checkInDate" style="padding-left: 18px">체크인 날짜:
@@ -136,15 +137,17 @@
         <ConfirmDialogComponent v-if="showLikesConfirmDialog" :isVisible="showLikesConfirmDialog"
           message="좋아요 목록으로 이동하시겠습니까?" :onConfirm="goToLikes" :onCancel="cancelGoToLikes" />
       </section>
+
+
       <section id="description" class="section3 up_border">
         <h2 class="sul" style="font-weight: bold">리뷰 ({{ houseDetails.reviewCnt }})</h2>
-        <div v-if="houseDetails.reviewCnt>0">
+        <div v-if="houseDetails.reviewCnt > 0">
           <div class="review-details" v-for="review in reviewList" :key="review.id">
             <div class="review-item">
-              <p class="updated-at">{{ review.updatedAt }}</p>
+              <p class="updated-at">{{ formatDate(review.updatedAt) }}</p>
               <p>작성자: {{ review.userNickName }}</p>
               <p>&nbsp;&nbsp;<strong>{{ review.reviewContent }}</strong></p>
-              <p> 
+              <p>
                 <span class="star-rating">
                   <span v-for="n in review.stars" :key="'filled-' + n" class="star filled">★</span>
                   <span v-for="n in (5 - review.stars)" :key="'empty-' + n" class="star">★</span>
@@ -310,8 +313,9 @@ import { useLikesStore } from "/src/stores/useLikesStore";
 import { useCartStore } from "/src/stores/useCartStore";
 import { useReviewStore } from "@/stores/useReviewStore";
 import ConfirmDialogComponent from "/src/components/ConfirmDialogComponent.vue";
-
 import Swiper from "swiper";
+import { useChatStore } from "@/stores/useChatStore";
+
 
 export default {
   data() {
@@ -327,7 +331,7 @@ export default {
     };
   },
   computed: {
-    ...mapStores(useMemberStore, useHouseStore, useLikesStore, useCartStore, useReviewStore),
+    ...mapStores(useMemberStore, useHouseStore, useLikesStore, useCartStore, useReviewStore, useChatStore),
   },
   components: { ConfirmDialogComponent },
   async mounted() {
@@ -368,14 +372,14 @@ export default {
         const response = await this.likesStore.likesHouse(userId, houseId);
 
         if (response.status === 200 && response.data) {
-          console.log("House liked successfully!");
+          // console.log("House liked successfully!");
           this.showLikesConfirmDialog = true;
         } else {
-          console.error("Failed to like the house.");
+          // console.error("Failed to like the house.");
           alert("좋아요 목록에 추가 실패");
         }
       } catch (error) {
-        console.error("Error while liking the house:", error);
+        alert("좋아요 목록에 숙소를 추가하는 과정에서 에러가 발생했습니다!")
       }
     },
     async addHouseToCart() {
@@ -391,14 +395,14 @@ export default {
         const response = await this.cartStore.addHouseToCart(requestBody);
 
         if (response.status === 200 && response.data) {
-          console.log("House added to cart successfully!");
+          // console.log("House added to cart successfully!");
           this.showCartConfirmDialog = true;
         } else {
-          console.error("Failed to add the house to cart.");
+          // console.error("Failed to add the house to cart.");
           alert("장바구니에 추가 실패!");
         }
       } catch (error) {
-        console.error("Error while adding the house to cart:", error);
+        alert("장바구니에 숙소를 추가하는 과정에서 에러가 발생했습니다!");
       }
     },
     goToCart() {
@@ -417,6 +421,28 @@ export default {
     cancelGoToLikes() {
       this.showLikesConfirmDialog = false;
     },
+    // 채팅
+    async startChat() {
+      const buyerId = this.memberStore.decodedToken.id;
+      const buyerNickname = this.memberStore.decodedToken.nickname;
+      const sellerId = this.houseDetails.userId;
+      const sellerNickname = this.houseDetails.userNickname;
+      const houseId = this.houseDetails.id;
+      try {
+        const chatRoomId = await this.chatStore.createOrJoinChatRoom(buyerId, buyerNickname, sellerId, sellerNickname, houseId);
+        this.$router.push(`/chat/${chatRoomId}`);
+      } catch (error) {
+        alert("Failed to start chat. Error: " + error.message);
+      }
+    },
+    formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.getFullYear() + '년 ' + 
+              (date.getMonth() + 1).toString().padStart(2, '0') + '월 ' + 
+              date.getDate().toString().padStart(2, '0') + '일 ' + ' ' +
+              date.getHours().toString().padStart(2, '0') + '시 ' + 
+              date.getMinutes().toString().padStart(2, '0') + '분';
+    }
   },
 };
 </script>
@@ -492,7 +518,7 @@ section.up_border {
   padding-bottom: 30px;
 }
 
-.section3.up_border{
+.section3.up_border {
   border-top: 1px solid #cccccc00;
   padding-bottom: 30px;
   margin-top: 250px;
@@ -808,24 +834,30 @@ h2 {
   padding: 15px;
   background-color: #f9f9f9;
 }
+
 .star-rating {
   display: flex;
 }
 
 .star {
-  font-size: 24px; /* 별 모양의 크기 조절 */
-  color: #d3d3d3; /* 비어있는 별의 색상 */
+  font-size: 24px;
+  /* 별 모양의 크기 조절 */
+  color: #d3d3d3;
+  /* 비어있는 별의 색상 */
   cursor: pointer;
 }
 
 .star.filled {
-  color: #f5b301; /* 채워진 별의 색상 */
+  color: #f5b301;
+  /* 채워진 별의 색상 */
 }
+
 .updated-at {
-  font-size: 0.8em; 
-  color: rgba(0, 0, 0, 0.5); 
-  font-style: italic; 
+  font-size: 0.8em;
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
 }
+
 .reviewImage {
   display: flex;
   justify-content: center;
@@ -838,5 +870,30 @@ h2 {
   width: 60%;
   height: auto;
   object-fit: contain;
+}
+
+.cart_right, .like_count, .chat_button {
+  display: inline-block;
+  margin: 20px 10px 0 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+.cart_right {
+  background-color: #ec1818;
+}
+
+.like_count {
+  background: transparent;
+  color: black;
+  font-weight: bold;
+}
+
+.chat_button {
+  background-color: #008CBA; /* 채팅 버튼 색상 */
 }
 </style>

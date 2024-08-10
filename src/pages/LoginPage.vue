@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       email: "test01@gmail.com",
-      password: "qwer1234@",
+      password: "qwer1234!",
     };
   },
   computed: {
@@ -106,7 +106,7 @@ export default {
         // Redirect to the home page
         this.$router.push("/");
       } catch (error) {
-        console.error("Login failed:", error);
+        alert("로그인 과정에서 에러가 발생했습니다!")
         // Handle login error, e.g., show an error message to the user
       }
     },

@@ -9,7 +9,7 @@
           <thead>
             <tr>
               <td>
-                <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" /> 전체 선택
+                <input type="checkbox" :checked="allSelected" @change="toggleSelectAll" /> 전체 선택
               </td>
               <td colspan="2">숙소 이미지</td>
               <td>숙소 이름</td>
@@ -68,26 +68,16 @@ import { useLikesStore } from "/src/stores/useLikesStore";
 export default {
   computed: {
     ...mapStores(useMemberStore, useLikesStore),
-    selectAll: {
-      get() {
-        return (
-          Array.isArray(this.likesStore.likesList) &&
-          this.likesStore.likesList.length > 0 &&
-          this.likesStore.likesList.every((item) => item.isSelected)
-        );
-      },
-      set(value) {
-        if (Array.isArray(this.likesStore.likesList)) {
-          this.likesStore.likesList.forEach((item) => {
-            item.isSelected = value;
-          });
-        }
-      },
+    allSelected() {
+      return this.likesStore.likesList.length > 0 && this.likesStore.likesList.every(item => item.isSelected);
     },
   },
   methods: {
-    toggleSelectAll() {
-      this.selectAll = !this.selectAll;
+    toggleSelectAll(event) {
+      const isChecked = event.target.checked;
+      this.likesStore.likesList.forEach(item => {
+        item.isSelected = isChecked;
+      });
     },
     async deleteSelectedLikes() {
       try {
@@ -102,7 +92,7 @@ export default {
             item.isSelected = false;
           });
         } else {
-          console.log("No likes selected");
+          alert("선택된 숙소가 없습니다!")
         }
       } catch (error) {
         console.error("Error deleting selected likes:", error);
@@ -111,16 +101,11 @@ export default {
   },
   async mounted() {
     const userId = this.memberStore.decodedToken.id;
-    console.log(userId);
+    // console.log(userId);
     if (userId) {
       try {
         await this.likesStore.getLikesList(userId);
 
-        if (Array.isArray(this.likesStore.likesList)) {
-          this.likesStore.likesList.forEach((item) => {
-            item.isSelected = false;
-          });
-        }
       } catch (error) {
         console.error("Error loading likes list:", error);
       }
@@ -207,17 +192,20 @@ td {
 .cart__list td:nth-child(6) {
   width: 150px;
 }
+
 .cart__list img {
   max-width: 100px;
   height: auto;
   display: block;
   margin: 0 auto;
 }
+
 .cart__list__optionbtn {
   display: block;
   text-align: left;
   margin-left: 75px;
 }
+
 .cart__list__optionbtn {
   background-color: white;
   font-size: 10px;
@@ -245,6 +233,7 @@ td {
   background-color: white;
   border: 1px lightgray solid;
 }
+
 .cart__bigorderbtn.right {
   background-color: blue;
   color: white;

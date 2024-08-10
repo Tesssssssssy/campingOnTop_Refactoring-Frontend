@@ -15,6 +15,8 @@ import MyCouponPage from '../pages/MyCouponPage';
 import OrderCompletePage from "../pages/OrderCompletePage";
 import MapPage from "../pages/MapPage";
 import ReviewPage from "../pages/ReviewPage";
+import ChatPage from "../pages/ChatPage";
+import ChatRoomListPage from "../pages/ChatRoomListPage";
 
 const requireAuth = () => (to, from, next) => {
   const token = getTokenFromCookie('refreshToken');
@@ -32,7 +34,7 @@ const requireAuth = () => (to, from, next) => {
         next(); // 유효한 토큰, 페이지 접근 허용
       }
     } catch (error) {
-      console.error("Token decoding failed:", error);
+      // console.error("Token decoding failed:", error);
       next("/login"); // 디코딩 실패 시 로그인 페이지로 리다이렉트
     }
   }
@@ -51,7 +53,9 @@ const routes = [
   { path: "/orders/complete", component: OrderCompletePage, beforeEnter: requireAuth() },
   { path: "/coupon", component: CouponPage, beforeEnter: requireAuth() },
   { path: "/my/coupon", component: MyCouponPage, beforeEnter: requireAuth() },
-  { path: "/review", component: ReviewPage}
+  { path: "/review", component: ReviewPage},
+  { path: "/chat/:roomId", component: ChatPage, beforeEnter: requireAuth() },
+  { path: "/chatRooms", component: ChatRoomListPage, beforeEnter: requireAuth() },
 ];
 
 const router = createRouter({

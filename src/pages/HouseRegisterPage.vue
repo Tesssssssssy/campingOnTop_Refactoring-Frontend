@@ -122,12 +122,12 @@ export default {
       try {
         const response = await this.houseStore.createHouse(this.formData);
         if (response) {
-          console.log("House created successfully:", response);
+          // console.log("House created successfully:", response);
           alert("숙소 등록 성공!");
           this.$router.push("/details/" + response.id);
         }
       } catch (error) {
-        console.error("Error creating house:", error);
+        alert("숙소를 등록하는 과정에서 에러가 발생했습니다!")
       }
     },
     handleFileUpload(event) {
