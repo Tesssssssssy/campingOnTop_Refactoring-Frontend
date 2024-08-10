@@ -29,14 +29,12 @@
         <form @submit.prevent="submitReview">
           <div class="form-group">
             <label for="review-content">리뷰 내용:</label>
-            <textarea id="review-content" v-model="review.content" placeholder="리뷰 내용을 입력하세요." rows="4"
-              required></textarea>
+            <textarea id="review-content" v-model="review.content" placeholder="리뷰 내용을 입력하세요." rows="4" required></textarea>
           </div>
           <div class="form-group star-rating">
             <label>별점:</label>
             <div class="stars">
-              <span v-for="n in 5" :key="n" :class="{ 'star': true, 'filled': review.stars >= n }"
-                @click="setStarRating(n)">
+              <span v-for="n in 5" :key="n" :class="{ 'star': true, 'filled': review.stars >= n }" @click="setStarRating(n)">
                 ★
               </span>
             </div>
@@ -54,8 +52,8 @@
 import axios from "axios";
 import { getTokenFromCookie } from "@/utils/authCookies";
 
-// const backend = process.env.VUE_APP_API_URL;
-const backend = process.env.VUE_APP_LOCAL_URL;
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export default {
   name: "OrderCompletePage",
@@ -77,7 +75,7 @@ export default {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      })
+      });
 
       if (response.data.result && response.data.result.length > 0) {
         this.orders = response.data.result;
@@ -244,6 +242,7 @@ a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* Ensure the modal is on top */
 }
 
 .modal-content {
