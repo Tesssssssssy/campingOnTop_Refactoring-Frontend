@@ -2,8 +2,8 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { getTokenFromCookie } from "@/utils/authCookies"; // 쿠키 관리 유틸리티 임포트
 
-// const backend = process.env.VUE_APP_API_URL;
-const backend = process.env.VUE_APP_LOCAL_URL;
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useHouseStore = defineStore("house", {
   state: () => ({
@@ -19,7 +19,7 @@ export const useHouseStore = defineStore("house", {
           backend + "/house/list?page=" + page + "&size=" + size
         );
 
-        console.log("Total items in response:", response.data.length);
+        // console.log("Total items in response:", response.data.length);
 
         const totalCountHeader = response.headers["x-total-count"];
         this.totalPages = totalCountHeader
@@ -35,9 +35,9 @@ export const useHouseStore = defineStore("house", {
 
         this.houseList = response.data;
 
-        console.log("Current page:", this.currentPage);
-        console.log("Total pages:", this.totalPages);
-        console.log(response);
+        // console.log("Current page:", this.currentPage);
+        // console.log("Total pages:", this.totalPages);
+        // console.log(response);
 
         return response.data;
       } catch (error) {
@@ -48,7 +48,7 @@ export const useHouseStore = defineStore("house", {
       try {
         const response = await axios.get(backend + "/house/find/" + id);
         this.houseDetails = response.data;
-        console.log(this.houseDetails);
+        // console.log(this.houseDetails);
       } catch (error) {
         console.error(error);
       }
@@ -66,7 +66,7 @@ export const useHouseStore = defineStore("house", {
         );
         this.houseList = response.data;
 
-        console.log(response);
+        // console.log(response);
         return response.data;
       } catch (error) {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
@@ -85,7 +85,7 @@ export const useHouseStore = defineStore("house", {
         );
         this.houseList = response.data;
 
-        console.log(response);
+        // console.log(response);
         return response.data;
       } catch (error) {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
@@ -104,7 +104,7 @@ export const useHouseStore = defineStore("house", {
         );
         this.houseList = response.data;
 
-        console.log(response);
+        // console.log(response);
         return response.data;
       } catch (error) {
         console.error("해당 주소 근처에 숙소들이 존재하지 않습니다");
@@ -118,7 +118,7 @@ export const useHouseStore = defineStore("house", {
         );
         this.houseList = response.data;
 
-        console.log(response);
+        // console.log(response);
         return response.data;
       } catch (error) {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
@@ -131,7 +131,7 @@ export const useHouseStore = defineStore("house", {
         );
         this.houseList = response.data;
 
-        console.log(response);
+        // console.log(response);
         return response.data;
       } catch (error) {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
@@ -144,7 +144,7 @@ export const useHouseStore = defineStore("house", {
         );
         this.houseList = response.data;
 
-        console.log(response);
+        // console.log(response);
         return response.data;
       } catch (error) {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
@@ -157,7 +157,7 @@ export const useHouseStore = defineStore("house", {
         );
         this.houseList = response.data;
 
-        console.log(response);
+        // console.log(response);
         return response.data;
       } catch (error) {
         console.error("해당 이름의 숙소들이 존재하지 않습니다");
@@ -189,7 +189,7 @@ export const useHouseStore = defineStore("house", {
           headers,
         });
 
-        console.log(response.data);
+        // console.log(response.data);
         return response.data;
       } catch (error) {
         console.error(error);

@@ -242,8 +242,8 @@ export default {
       return re.test(email.toLowerCase());
     },
     async submitRegistration() {
-      // const backend = process.env.VUE_APP_API_URL;
-      const backend = process.env.VUE_APP_LOCAL_URL;
+      const backend = process.env.VUE_APP_API_URL;
+      // const backend = process.env.VUE_APP_LOCAL_URL;
       if (!this.isSignUpEnabled) return;
       try {
         const data = {
@@ -264,7 +264,7 @@ export default {
           );
           this.$router.push("/login");
         } else {
-          console.error("회원 가입 실패");
+          alert("입력한 값들 중 조건을 충족하지 못하는 값이 있습니다. 다시 시도해주세요.");
         }
       } catch (error) {
         console.error("회원가입 에러:", error);

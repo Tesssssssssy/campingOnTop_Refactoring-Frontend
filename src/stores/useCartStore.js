@@ -3,8 +3,8 @@ import axios from "axios";
 import { useMemberStore } from './useMemberStore.js';
 import { getTokenFromCookie } from "@/utils/authCookies";
 
-// const backend = process.env.VUE_APP_API_URL;
-const backend = process.env.VUE_APP_LOCAL_URL;
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
@@ -16,6 +16,11 @@ export const useCartStore = defineStore("cart", {
   }),
   getters: {
     finalCost: (state) => {
+      // cartList가 배열이 아닌 경우 빈 배열로 처리
+      if (!Array.isArray(state.cartList)) {
+        return 0;
+      }
+
       const totalSelectedAmount = state.cartList.reduce((total, item) => {
         return item.selected ? total + item.price : total;
       }, 0);
@@ -28,8 +33,8 @@ export const useCartStore = defineStore("cart", {
     async getCartList(userId) {
       try {
         let response = await axios.get(backend + "/cart/find/" + userId);
-        this.cartList = response.data;
-        return response.data;
+        this.cartList = Array.isArray(response.data) ? response.data : []; // 데이터가 배열인지 확인 후 설정
+        return this.cartList;
       } catch (error) {
         console.error("Error fetching cart list:", error);
         throw error;
@@ -46,7 +51,7 @@ export const useCartStore = defineStore("cart", {
         });
         return response;
       } catch (error) {
-        console.error("Error while adding the house to cart:", error);
+        alert("장바구니에 숙소를 추가하는 과정에서 에러가 발생했습니다!");
         throw error;
       }
     },
@@ -58,14 +63,14 @@ export const useCartStore = defineStore("cart", {
           this.cartList = this.cartList.filter(cartItem => cartItem.id !== item.id);
         }
       } catch (error) {
-        console.error('삭제 중 오류 발생:', error);
+        // console.error('삭제 중 오류 발생:', error);
         alert('삭제 처리 중 문제가 발생했습니다.');
       }
     },
     async processPayment() {
       const memberStore = useMemberStore();
       const finalAmount = this.finalCost;
-      console.log("finalAmount: ", finalAmount);
+      // console.log("finalAmount: ", finalAmount);
 
       if (finalAmount <= 0) {
         alert('결제할 금액이 부족합니다. 쿠폰 할인이 너무 높거나 선택된 항목이 없습니다.');
@@ -120,7 +125,7 @@ export const useCartStore = defineStore("cart", {
               alert('결제 검증 실패');
             }
           } catch (error) {
-            console.error("서버 응답 오류:", error);
+            // console.error("서버 응답 오류:", error);
             alert('결제 검증 과정에서 오류가 발생했습니다.');
           }
         } else {

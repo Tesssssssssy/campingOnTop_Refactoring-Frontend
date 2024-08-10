@@ -4,8 +4,8 @@ import VueJwtDecode from "vue-jwt-decode";
 import { getTokenFromCookie, setTokenCookies, deleteTokenCookies } from "@/utils/authCookies"; // 쿠키 관리 유틸리티 임포트
 import { customJwtDecode } from "@/utils/jwtDecode"; // 위에서 작성한 base64UrlDecode 유틸리티 함수
 
-// const backend = process.env.VUE_APP_API_URL;
-const backend = process.env.VUE_APP_LOCAL_URL;
+const backend = process.env.VUE_APP_API_URL;
+// const backend = process.env.VUE_APP_LOCAL_URL;
 
 export const useMemberStore = defineStore("member", {
   state: () => ({
@@ -43,7 +43,7 @@ export const useMemberStore = defineStore("member", {
             this.$router.push("/login");
           }
         } else {
-          console.error("Login failed:", error);
+          // console.error("Login failed:", error);
           alert("서버와의 통신에 문제가 발생했습니다. 다시 시도해주세요.");
           this.$router.push("/login");
         }
@@ -70,7 +70,7 @@ export const useMemberStore = defineStore("member", {
           this.logout(); // 토큰 갱신 실패 시 로그아웃 처리
         }
       } catch (error) {
-        console.error("Failed to refresh token:", error);
+        // console.error("Failed to refresh token:", error);
         this.logout();
       }
     },

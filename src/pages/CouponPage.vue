@@ -38,8 +38,8 @@ export default {
 
         const requestCoupon = async (optionValue) => {
             const token = getTokenFromCookie('accessToken');
-            // const backend = process.env.VUE_APP_API_URL;
-            const backend = process.env.VUE_APP_LOCAL_URL;
+            const backend = process.env.VUE_APP_API_URL;
+            // const backend = process.env.VUE_APP_LOCAL_URL;
             try {
                 const response = await axios.post(`${backend}/coupons/request/${optionValue}`, {}, {
                     headers: {
@@ -47,7 +47,7 @@ export default {
                     }
                 });
                 message.value = response.data.message;
-                console.log(response.data)
+                // console.log(response.data)
                 if (response.data === "쿠폰이 발급되었습니다.") {
                     const userConfirmed = confirm("쿠폰이 발급되었습니다! 쿠폰 내역 페이지로 이동하시겠습니까?");
                     if (userConfirmed) {
